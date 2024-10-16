@@ -1,56 +1,81 @@
-import { Image, Platform, StyleSheet } from "react-native";
+import {
+	Image,
+	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useRouter } from "expo-router";
+
+function CalDay({
+	onPress,
+	label,
+	day,
+}: { onPress: () => void; label: string; day: number }) {
+	return (
+		<View style={{ flex: 1, rowGap: 4 }}>
+			<View
+				style={{
+					backgroundColor: "#dddddd",
+					height: 30,
+					borderRadius: 15,
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<Text style={{}}>{label}</Text>
+			</View>
+			<Pressable
+				style={({ pressed }) => [
+					{
+						backgroundColor: pressed ? "#ddd" : "#eee",
+					},
+					{
+						borderRadius: 15,
+						aspectRatio: 1,
+						width: "100%",
+						alignItems: "center",
+					},
+				]}
+				onPress={onPress}
+			>
+				<View style={{ flex: 2 }} />
+				<Text style={{ flex: 1 }}>{day}</Text>
+			</Pressable>
+		</View>
+	);
+}
 
 export default function HomeScreen() {
+	const router = useRouter();
+
 	return (
-		<ParallaxScrollView
-			headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-			headerImage={
-				<Image
-					source={require("@/assets/images/partial-react-logo.png")}
-					style={styles.reactLogo}
-				/>
-			}
+		<ThemedView
+			style={{
+				flex: 1,
+				justifyContent: "center",
+				alignItems: "center",
+				paddingHorizontal: 12,
+			}}
 		>
-			<ThemedView style={styles.titleContainer}>
-				<ThemedText type="title">Welcome!</ThemedText>
-				<HelloWave />
-			</ThemedView>
-			<ThemedView style={styles.stepContainer}>
-				<ThemedText type="subtitle">Step 1: Try it</ThemedText>
-				<ThemedText>
-					Edit{" "}
-					<ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-					to see changes. Press{" "}
-					<ThemedText type="defaultSemiBold">
-						{Platform.select({ ios: "cmd + d", android: "cmd + m" })}
-					</ThemedText>{" "}
-					to open developer tools.
-				</ThemedText>
-			</ThemedView>
-			<ThemedView style={styles.stepContainer}>
-				<ThemedText type="subtitle">Step 2: Explore</ThemedText>
-				<ThemedText>
-					Tap the Explore tab to learn more about what's included in this
-					starter app.
-				</ThemedText>
-			</ThemedView>
-			<ThemedView style={styles.stepContainer}>
-				<ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-				<ThemedText>
-					When you're ready, run{" "}
-					<ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{" "}
-					to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-					directory. This will move the current{" "}
-					<ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-					<ThemedText type="defaultSemiBold">app-example</ThemedText>.
-				</ThemedText>
-			</ThemedView>
-		</ParallaxScrollView>
+			<View style={{ flexDirection: "row", columnGap: 4 }}>
+				{["MON", "TUE", "WED", "THU", "FRI"].map((d, i) => (
+					<CalDay
+						key={d}
+						label={d}
+						day={i + 13} // example day
+						onPress={() => router.push("/modal")}
+					/>
+				))}
+			</View>
+		</ThemedView>
 	);
 }
 
