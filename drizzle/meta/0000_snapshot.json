@@ -1,11 +1,11 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "3af4d2ec-e448-4a54-b554-af0e9007a2cc",
+  "id": "0197d8df-8e30-49ce-bb54-f021af1468d0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "users_table": {
-      "name": "users_table",
+    "ingredients": {
+      "name": "ingredients",
       "columns": {
         "id": {
           "name": "id",
@@ -21,30 +21,209 @@
           "notNull": true,
           "autoincrement": false
         },
-        "age": {
-          "name": "age",
+        "preferredStoreId": {
+          "name": "preferredStoreId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ingredients_preferredStoreId_stores_id_fk": {
+          "name": "ingredients_preferredStoreId_stores_id_fk",
+          "tableFrom": "ingredients",
+          "tableTo": "stores",
+          "columnsFrom": [
+            "preferredStoreId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "meals": {
+      "name": "meals",
+      "columns": {
+        "year": {
+          "name": "year",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "email": {
-          "name": "email",
-          "type": "text",
+        "week": {
+          "name": "week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "day": {
+          "name": "day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recipeId": {
+          "name": "recipeId",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         }
       },
       "indexes": {
-        "users_table_email_unique": {
-          "name": "users_table_email_unique",
+        "week_index": {
+          "name": "week_index",
           "columns": [
-            "email"
+            "year",
+            "week"
           ],
-          "isUnique": true
+          "isUnique": false
         }
       },
+      "foreignKeys": {
+        "meals_recipeId_recipes_id_fk": {
+          "name": "meals_recipeId_recipes_id_fk",
+          "tableFrom": "meals",
+          "tableTo": "recipes",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "meals_year_week_day_pk": {
+          "columns": [
+            "year",
+            "week",
+            "day"
+          ],
+          "name": "meals_year_week_day_pk"
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "recipe_ingredients": {
+      "name": "recipe_ingredients",
+      "columns": {
+        "recipeId": {
+          "name": "recipeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ingredientId": {
+          "name": "ingredientId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "recipe_ingredients_recipeId_recipes_id_fk": {
+          "name": "recipe_ingredients_recipeId_recipes_id_fk",
+          "tableFrom": "recipe_ingredients",
+          "tableTo": "recipes",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "recipe_ingredients_ingredientId_ingredients_id_fk": {
+          "name": "recipe_ingredients_ingredientId_ingredients_id_fk",
+          "tableFrom": "recipe_ingredients",
+          "tableTo": "ingredients",
+          "columnsFrom": [
+            "ingredientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "recipe_ingredients_recipeId_ingredientId_pk": {
+          "columns": [
+            "recipeId",
+            "ingredientId"
+          ],
+          "name": "recipe_ingredients_recipeId_ingredientId_pk"
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "recipes": {
+      "name": "recipes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "stores": {
+      "name": "stores",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
