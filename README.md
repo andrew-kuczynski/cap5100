@@ -27,9 +27,12 @@ You can start developing by editing the files inside the **app** directory. This
 
 ## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
+More Resources:
 
-- [Expo docs](https://docs.expo.dev/)
+- [React Native](https://reactnative.dev/docs/getting-started)
+  - [Styling](https://reactnative.dev/docs/style) 
+- [Expo](https://docs.expo.dev/)
   - [Tutorial](https://docs.expo.dev/tutorial/introduction/)
   - [Guides](https://docs.expo.dev/guides)
-- [Drizzle docs](https://orm.drizzle.team/docs/overview)
+- [Drizzle ORM](https://orm.drizzle.team/docs/overview)
+- [React Query](https://tanstack.com/query/latest/docs/framework/react/installation)
