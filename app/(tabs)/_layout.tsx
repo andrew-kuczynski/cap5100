@@ -13,7 +13,7 @@ export default function TabLayout() {
 			}}
 		>
 			<Tabs.Screen
-				name="index"
+				name="(home)"
 				options={{
 					title: "Home",
 					tabBarIcon: ({ color, focused }) => (
@@ -25,9 +25,9 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="explore"
+				name="recipes"
 				options={{
-					title: "Explore",
+					title: "Recipes",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
 							name={focused ? "code-slash" : "code-slash-outline"}
@@ -39,7 +39,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="three"
 				options={{
-					title: "Tab 3",
+					title: "Grocery List",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
 							name={focused ? "code-slash" : "code-slash-outline"}

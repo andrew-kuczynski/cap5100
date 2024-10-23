@@ -1,24 +1,21 @@
-import {
-	Image,
-	Platform,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useDate, useWeekDays } from "@/hooks/date";
+import queries from "@/utils/queries";
+import { useQuery } from "@tanstack/react-query";
+import { endOfWeek, getDate, startOfWeek } from "date-fns";
 import { useRouter } from "expo-router";
 
 function CalDay({
 	onPress,
 	label,
-	day,
-}: { onPress: () => void; label: string; day: number }) {
+	date,
+	today,
+}: { onPress: () => void; label: string; date: Date; today?: boolean }) {
+	const day = getDate(date);
+	const { data: meal } = useQuery(queries.meals.byDay(date));
+
 	return (
 		<View style={{ flex: 1, rowGap: 4 }}>
 			<View
@@ -30,7 +27,7 @@ function CalDay({
 					alignItems: "center",
 				}}
 			>
-				<Text style={{}}>{label}</Text>
+				<Text>{label}</Text>
 			</View>
 			<Pressable
 				style={({ pressed }) => [
@@ -43,10 +40,18 @@ function CalDay({
 						width: "100%",
 						alignItems: "center",
 					},
+					today
+						? {
+								borderColor: "red",
+								borderWidth: 1,
+							}
+						: {},
 				]}
 				onPress={onPress}
 			>
-				<View style={{ flex: 2 }} />
+				<View style={{ flex: 2 }}>
+					<Text>{meal?.recipe?.name ?? "?"}</Text>
+				</View>
 				<Text style={{ flex: 1 }}>{day}</Text>
 			</Pressable>
 		</View>
@@ -55,6 +60,13 @@ function CalDay({
 
 export default function HomeScreen() {
 	const router = useRouter();
+	const weekDays = useWeekDays();
+
+	const date = useDate();
+
+	const { data: meals } = useQuery(
+		queries.meals.byDateRange(startOfWeek(date), endOfWeek(date)),
+	);
 
 	return (
 		<ThemedView
@@ -66,12 +78,20 @@ export default function HomeScreen() {
 			}}
 		>
 			<View style={{ flexDirection: "row", columnGap: 4 }}>
-				{["MON", "TUE", "WED", "THU", "FRI"].map((d, i) => (
+				{weekDays.map((d, i) => (
 					<CalDay
-						key={d}
-						label={d}
-						day={i + 13} // example day
-						onPress={() => router.push("/modal")}
+						key={d.id}
+						label={d.dayDisplay}
+						date={d.date}
+						today={d.isToday}
+						onPress={() =>
+							router.push({
+								pathname: "/day",
+								params: {
+									date: d.id,
+								},
+							})
+						}
 					/>
 				))}
 			</View>

@@ -6,15 +6,11 @@ CREATE TABLE `ingredients` (
 );
 --> statement-breakpoint
 CREATE TABLE `meals` (
-	`year` integer NOT NULL,
-	`week` integer NOT NULL,
-	`day` integer NOT NULL,
+	`date` integer PRIMARY KEY NOT NULL,
 	`recipeId` integer NOT NULL,
-	PRIMARY KEY(`year`, `week`, `day`),
 	FOREIGN KEY (`recipeId`) REFERENCES `recipes`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE INDEX `week_index` ON `meals` (`year`,`week`);--> statement-breakpoint
 CREATE TABLE `recipe_ingredients` (
 	`recipeId` integer NOT NULL,
 	`ingredientId` integer NOT NULL,

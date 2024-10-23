@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
 	index,
 	int,
+	integer,
 	primaryKey,
 	sqliteTable,
 	text,
@@ -64,21 +65,12 @@ export const recipeIngredientsRelations = relations(
 	}),
 );
 
-export const mealsTable = sqliteTable(
-	"meals",
-	{
-		year: int().notNull(),
-		week: int().notNull(),
-		day: int().notNull(),
-		recipeId: int()
-			.notNull()
-			.references(() => recipesTable.id),
-	},
-	(t) => ({
-		pk: primaryKey({ columns: [t.year, t.week, t.day] }),
-		idx: index("week_index").on(t.year, t.week),
-	}),
-);
+export const mealsTable = sqliteTable("meals", {
+	date: integer({ mode: "timestamp" }).primaryKey(),
+	recipeId: int()
+		.notNull()
+		.references(() => recipesTable.id),
+});
 
 export const mealsRelations = relations(mealsTable, ({ one }) => ({
 	recipe: one(recipesTable, {
