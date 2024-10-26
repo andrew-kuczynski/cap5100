@@ -1,8 +1,18 @@
+CREATE TABLE `stores` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `ingredients` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`preferredStoreId` integer,
 	FOREIGN KEY (`preferredStoreId`) REFERENCES `stores`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `recipes` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `meals` (
@@ -18,14 +28,4 @@ CREATE TABLE `recipe_ingredients` (
 	PRIMARY KEY(`recipeId`, `ingredientId`),
 	FOREIGN KEY (`recipeId`) REFERENCES `recipes`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`ingredientId`) REFERENCES `ingredients`(`id`) ON UPDATE no action ON DELETE no action
-);
---> statement-breakpoint
-CREATE TABLE `recipes` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`name` text NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE `stores` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`name` text NOT NULL
 );
