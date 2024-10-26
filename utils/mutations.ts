@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { ingredientsTable, mealsTable, recipesTable } from "@/db/schema";
+import { recipesTable } from "@/db/schema/base";
+import { ingredientsTable, mealsTable } from "@/db/schema/extra";
 import type { IngredientInsert, MealInsert, RecipeInsert } from "@/db/types";
 import { eq } from "drizzle-orm";
 

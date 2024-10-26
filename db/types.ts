@@ -1,11 +1,10 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import type { recipesTable, storesTable } from "./schema/base";
 import type {
 	ingredientsTable,
 	mealsTable,
 	recipeIngredientsTable,
-	recipesTable,
-	storesTable,
-} from "./schema";
+} from "./schema/extra";
 
 export type Recipe = InferSelectModel<typeof recipesTable>;
 export type RecipeInsert = InferInsertModel<typeof recipesTable>;

@@ -1,39 +1,18 @@
 import { relations } from "drizzle-orm";
 import {
-	index,
 	int,
 	integer,
 	primaryKey,
 	sqliteTable,
 	text,
 } from "drizzle-orm/sqlite-core";
+import { recipesTable, storesTable } from "./base";
 
 export const ingredientsTable = sqliteTable("ingredients", {
 	id: int().primaryKey({ autoIncrement: true }),
 	name: text().notNull(),
 	preferredStoreId: int().references(() => storesTable.id),
 });
-
-export const ingredientsRelations = relations(
-	ingredientsTable,
-	({ many, one }) => ({
-		ingredientsToRecipes: many(recipeIngredientsTable),
-		preferredStore: one(storesTable, {
-			fields: [ingredientsTable.preferredStoreId],
-			references: [storesTable.id],
-		}),
-	}),
-);
-
-export const recipesTable = sqliteTable("recipes", {
-	id: int().primaryKey({ autoIncrement: true }),
-	name: text().notNull(),
-});
-
-export const recipesRelations = relations(recipesTable, ({ many }) => ({
-	recipesToIngredients: many(recipeIngredientsTable),
-	meals: many(mealsTable),
-}));
 
 export const recipeIngredientsTable = sqliteTable(
 	"recipe_ingredients",
@@ -72,17 +51,28 @@ export const mealsTable = sqliteTable("meals", {
 		.references(() => recipesTable.id),
 });
 
+export const ingredientsRelations = relations(
+	ingredientsTable,
+	({ many, one }) => ({
+		ingredientsToRecipes: many(recipeIngredientsTable),
+		preferredStore: one(storesTable, {
+			fields: [ingredientsTable.preferredStoreId],
+			references: [storesTable.id],
+		}),
+	}),
+);
+
+export const recipesRelations = relations(recipesTable, ({ many }) => ({
+	recipesToIngredients: many(recipeIngredientsTable),
+	meals: many(mealsTable),
+}));
+
 export const mealsRelations = relations(mealsTable, ({ one }) => ({
 	recipe: one(recipesTable, {
 		fields: [mealsTable.recipeId],
 		references: [recipesTable.id],
 	}),
 }));
-
-export const storesTable = sqliteTable("stores", {
-	id: int().primaryKey({ autoIncrement: true }),
-	name: text().notNull(),
-});
 
 export const storesRelations = relations(storesTable, ({ many }) => ({
 	storesToIngredients: many(ingredientsTable),
