@@ -1,23 +1,33 @@
 import { db } from "@/db";
-import * as schema from "@/db/schema";
+import { ingredientsTable, mealsTable, recipesTable } from "@/db/schema";
 import type { IngredientInsert, MealInsert, RecipeInsert } from "@/db/types";
+import { eq } from "drizzle-orm";
 
 const recipes = {
 	create: (data: RecipeInsert) =>
-		db.insert(schema.recipesTable).values(data).returning(),
-	deleteAll: () => db.delete(schema.recipesTable),
+		db.insert(recipesTable).values(data).returning(),
+	deleteAll: () => db.delete(recipesTable),
 };
 
 const ingredients = {
 	create: (data: IngredientInsert) =>
-		db.insert(schema.ingredientsTable).values(data).returning(),
-	deleteAll: () => db.delete(schema.ingredientsTable),
+		db.insert(ingredientsTable).values(data).returning(),
+	deleteAll: () => db.delete(ingredientsTable),
 };
 
 const meals = {
 	create: (data: MealInsert) =>
-		db.insert(schema.mealsTable).values(data).returning(),
-	deleteAll: () => db.delete(schema.mealsTable),
+		db
+			.insert(mealsTable)
+			.values(data)
+			.onConflictDoUpdate({
+				target: mealsTable.date,
+				set: { recipeId: data.recipeId },
+			})
+			.returning(),
+	delete: (date: Date) =>
+		db.delete(mealsTable).where(eq(mealsTable.date, date)),
+	deleteAll: () => db.delete(mealsTable),
 };
 
 export default {

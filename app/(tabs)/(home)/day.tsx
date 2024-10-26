@@ -31,6 +31,9 @@ export default function TabTwoScreen() {
 					<Text>Current Meal: {currentMeal.recipe.name ?? "?"}</Text>
 				</View>
 			) : null}
+			<View>
+				<Text>Select other meal</Text>
+			</View>
 			<RecipeList
 				onSelect={({ id: recipeId }) => {
 					mutate({
