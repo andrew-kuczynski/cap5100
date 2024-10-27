@@ -30,7 +30,7 @@ export default function TabLayout() {
 					title: "Recipes",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "code-slash" : "code-slash-outline"}
+							name={focused ? "book" : "book-outline"}
 							color={color}
 						/>
 					),
@@ -42,7 +42,7 @@ export default function TabLayout() {
 					title: "Grocery List",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "code-slash" : "code-slash-outline"}
+							name={focused ? "basket" : "basket-outline"}
 							color={color}
 						/>
 					),
@@ -54,7 +54,7 @@ export default function TabLayout() {
 					title: "Tab 4",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "code-slash" : "code-slash-outline"}
+							name={focused ? "settings" : "settings-outline"}
 							color={color}
 						/>
 					),
