@@ -26,17 +26,17 @@ export default function RootLayout() {
 		}
 	}, [loaded, success]);
 
-	if (error) {
-		return (
-			<View>
-				<Text>Migration error: {error.message}</Text>
-			</View>
-		);
-	}
+	// if (error) {
+	// 	return (
+	// 		<View>
+	// 			<Text>Migration error: {error.message}</Text>
+	// 		</View>
+	// 	);
+	// }
 
-	if (!loaded || !success) {
-		return null;
-	}
+	// if (!loaded || !success) {
+	// 	return null;
+	// }
 
 	return (
 		<QueryClientProvider client={queryClient}>

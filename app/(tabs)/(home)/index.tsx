@@ -6,6 +6,7 @@ import queries from "@/utils/queries";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, getDate, startOfWeek } from "date-fns";
 import { useRouter } from "expo-router";
+import "../../../global.css"
 
 function CalDay({
 	onPress,
