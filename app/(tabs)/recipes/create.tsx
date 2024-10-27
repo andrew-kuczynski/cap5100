@@ -17,6 +17,7 @@ import queries from "@/utils/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import "../../../global.css"
 
 export default function HomeScreen() {
 	const router = useRouter();
@@ -31,28 +32,54 @@ export default function HomeScreen() {
 	});
 
 	const [name, setName] = useState("");
+	const [ingredients, setIngredients] = useState("");
+	const [amounts, setAmounts] = useState("");
 
 	return (
-		<View style={{ padding: 16 }}>
-			<View>
-				<Text>Name</Text>
+		<View style={{flex:1 , padding: 16 }}>
+			<View style={{ flex:1 }}>
+				<Text style={{fontSize: 18}}>Name</Text>
 				<TextInput
-					style={{ borderColor: "black", borderWidth: 1, padding: 8 }}
+					style={{ borderColor: "gray", borderWidth: 1, padding: 8, borderRadius: 10 , marginTop: 5, marginBottom: 10}}
 					value={name}
 					onChangeText={setName}
+					autoFocus = {true}
 				/>
+				<View style={{flexDirection: "row"}}>
+					<Text style={{flex:1 , textAlign: "left", fontSize: 17}}>
+						Ingredients
+					</Text>
+					<Text style={{flex:1, textAlign: "right", fontSize: 17}}>Amount</Text>
+				</View>
+				<View style={{flexDirection: "row"}}>
+					<TextInput
+						style={{ flex:3, borderColor: "gray", borderWidth: 1, padding: 8, borderRadius: 10 , marginTop: 5, marginRight:2}}
+						value={ingredients}
+						onChangeText={setIngredients}
+						multiline={true}
+					/>
+					<TextInput
+						style={{ flex:1 , borderColor: "gray", borderWidth: 1, padding: 8, borderRadius: 10 , marginTop: 5, marginLeft:2}}
+						value={amounts}
+						onChangeText={setAmounts}
+						multiline={true}
+
+
+				/>
+				</View>
+				<View>
+					<Button
+						title="Create"
+						onPress={() => {
+							if (name) {
+								mutate({ name });
+							}
+						}}
+					/>
+				</View>
 			</View>
 
-			<View>
-				<Button
-					title="Create"
-					onPress={() => {
-						if (name) {
-							mutate({ name });
-						}
-					}}
-				/>
-			</View>
+			
 		</View>
 	);
 }

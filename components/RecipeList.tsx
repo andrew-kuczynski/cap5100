@@ -15,7 +15,7 @@ export function RecipeList({
 			renderItem={({ item }) => (
 				<Pressable
 					onPress={() => onSelect(item)}
-					style={{ padding: 8, borderColor: "black", borderWidth: 1 }}
+					style={{ padding: 10, borderColor: "black", borderWidth: 1 }}
 				>
 					<Text>{item.name}</Text>
 				</Pressable>

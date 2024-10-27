@@ -10,11 +10,12 @@ import { Text, View } from "react-native";
 export default function Layout() {
 	return (
 		<Stack>
-			<Stack.Screen name="index" options={{ headerShown: true }} />
+			<Stack.Screen name="index" options={{ headerShown: true , title: "My Saved Recipes"}} />
 			<Stack.Screen
 				name="create"
 				options={{
 					presentation: "modal",
+					title: "New Recipe"
 				}}
 			/>
 		</Stack>
