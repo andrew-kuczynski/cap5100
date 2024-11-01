@@ -18,35 +18,12 @@ function CalDay({
 
 	return (
 		<View style={{ flex: 1, rowGap: 4 }}>
-			<View
-				style={{
-					backgroundColor: "#dddddd",
-					height: 30,
-					borderRadius: 15,
-					justifyContent: "center",
-					alignItems: "center",
-				}}
-			>
+			<View className="bg-[#ddd] rounded-[15] h-[30] justify-center items-center">
 				<Text>{label}</Text>
 			</View>
 			<Pressable
-				style={({ pressed }) => [
-					{
-						backgroundColor: pressed ? "#ddd" : "#eee",
-					},
-					{
-						borderRadius: 15,
-						aspectRatio: 1,
-						width: "100%",
-						alignItems: "center",
-					},
-					today
-						? {
-								borderColor: "red",
-								borderWidth: 1,
-							}
-						: {},
-				]}
+				className="rounded-[15] items-center aspect-square bg-[#eee] active:bg-[#ddd] aria-selected:border aria-selected:border-red-600"
+				aria-selected={today}
 				onPress={onPress}
 			>
 				<View style={{ flex: 2 }}>

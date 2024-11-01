@@ -9,10 +9,10 @@ import {
 
 export const storesTable = sqliteTable("stores", {
 	id: int().primaryKey({ autoIncrement: true }),
-	name: text().notNull(),
+	name: text().notNull().unique(),
 });
 
 export const recipesTable = sqliteTable("recipes", {
 	id: int().primaryKey({ autoIncrement: true }),
-	name: text().notNull(),
+	name: text().notNull().unique(),
 });

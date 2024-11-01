@@ -10,7 +10,7 @@ import { recipesTable, storesTable } from "./base";
 
 export const ingredientsTable = sqliteTable("ingredients", {
 	id: int().primaryKey({ autoIncrement: true }),
-	name: text().notNull(),
+	name: text().notNull().unique(),
 	preferredStoreId: int().references(() => storesTable.id),
 });
 

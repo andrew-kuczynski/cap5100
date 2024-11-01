@@ -33,6 +33,17 @@ const recipes = createQueryKeys("recipes", {
 			return db.query.recipesTable
 				.findFirst({
 					where: (table, { eq }) => eq(table.id, id),
+					with: {
+						recipesToIngredients: {
+							with: {
+								ingredient: {
+									with: {
+										preferredStore: true,
+									},
+								},
+							},
+						},
+					},
 				})
 				.then((result) => result ?? null);
 		},

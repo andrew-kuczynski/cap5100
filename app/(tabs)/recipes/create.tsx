@@ -1,77 +1,172 @@
-import {
-	Button,
-	Image,
-	Platform,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-} from "react-native";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { colors } from "@/constants/Colors";
 import mutations from "@/utils/mutations";
 import queries from "@/utils/queries";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-export default function HomeScreen() {
+export default function CreateScreen() {
+	const ingredientsInput = useRef<TextInput>(null);
+	const nameInput = useRef<TextInput>(null);
 	const router = useRouter();
 	const qc = useQueryClient();
 
 	const { mutate } = useMutation({
 		mutationFn: mutations.recipes.create,
 		onSuccess: () => {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 			qc.invalidateQueries(queries.recipes.list);
 			router.back();
+		},
+		onError(error) {
+			console.error(error);
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 		},
 	});
 
 	const [name, setName] = useState("");
+	const [tempIngredientValue, setTempIngredientValue] = useState("");
+
+	const [ingredientValue, setIngredientValue] = useState("");
+
+	const [focusedIngredient, setFocusedIngredient] = useState<number | null>(
+		null,
+	);
+	const [ingredients, setIngredients] = useState<string[]>([]);
+
+	const onSubmitName = () => {
+		Haptics.selectionAsync();
+		ingredientsInput.current?.focus();
+	};
+
+	const onSubmitIngredient = () => {
+		if (focusedIngredient !== null) {
+			if (ingredientValue) {
+				setIngredients(
+					ingredients.map((existing, i) =>
+						i === focusedIngredient ? ingredientValue : existing,
+					),
+				);
+				Haptics.selectionAsync();
+			}
+			setFocusedIngredient(null);
+			setIngredientValue(tempIngredientValue);
+			return;
+		}
+
+		const newIngredients = ingredientValue
+			.trim()
+			.split("\n")
+			.map((i) => i.trim())
+			.filter((i) => !ingredients.includes(i));
+
+		setIngredients((oldIng) => newIngredients.concat(oldIng));
+		setIngredientValue("");
+		Haptics.selectionAsync();
+	};
+
+	const onIngredientPress = (i: number) => () => {
+		setFocusedIngredient(i);
+		setTempIngredientValue(ingredientValue);
+		setIngredientValue(ingredients[i]);
+		ingredientsInput.current?.focus();
+	};
+
+	const onSave = () => {
+		mutate({ name, ingredients });
+	};
 
 	return (
-		<View style={{ padding: 16 }}>
-			<View>
-				<Text>Name</Text>
-				<TextInput
-					style={{ borderColor: "black", borderWidth: 1, padding: 8 }}
-					value={name}
-					onChangeText={setName}
-				/>
-			</View>
+		<ScrollView
+			className="px-4 py-8 flex flex-1"
+			keyboardShouldPersistTaps="handled"
+		>
+			<View className="flex-1 gap-y-12">
+				<View>
+					<TextInput
+						ref={nameInput}
+						value={name}
+						onChangeText={setName}
+						style={{ fontSize: 24 }}
+						className="border-hairline rounded-lg p-2"
+						placeholderTextColor="gray"
+						placeholder="Recipe Name"
+						onSubmitEditing={onSubmitName}
+						autoFocus
+						enablesReturnKeyAutomatically
+						returnKeyType="done"
+					/>
+				</View>
 
-			<View>
-				<Button
-					title="Create"
-					onPress={() => {
-						if (name) {
-							mutate({ name });
-						}
-					}}
-				/>
+				<View className="gap-y-6">
+					<View>
+						<TextInput
+							ref={ingredientsInput}
+							value={ingredientValue}
+							onChangeText={setIngredientValue}
+							style={{ fontSize: 24 }}
+							className="border-hairline rounded-lg p-2"
+							placeholderTextColor="gray"
+							placeholder="Ingredients(s)"
+							onSubmitEditing={onSubmitIngredient}
+							enablesReturnKeyAutomatically
+							blurOnSubmit={false}
+							returnKeyType="next"
+						/>
+						<Pressable
+							onPress={onSubmitIngredient}
+							className="absolute right-0 top-0 h-full aspect-square p-1"
+						>
+							<View
+								style={{ backgroundColor: colors.tabIconSelected }}
+								className="rounded-lg items-center justify-center h-full w-full"
+							>
+								<Ionicons
+									name={focusedIngredient === null ? "add" : "checkmark"}
+									size={24}
+									color="white"
+								/>
+							</View>
+						</Pressable>
+					</View>
+					{ingredients.map((ingredient, i) => (
+						<View
+							key={ingredient}
+							className="border-hairline rounded-lg gap-x-3 items-center justify-between flex-row"
+						>
+							<Pressable
+								className="p-3 flex-row gap-x-2 items-center"
+								onPress={onIngredientPress(i)}
+							>
+								<Ionicons name="pencil" size={18} />
+								<Text className="text-xl">{ingredient}</Text>
+							</Pressable>
+							<Pressable
+								className="p-3"
+								onPress={() => {
+									setIngredients(ingredients.filter((_, j) => j !== i));
+									Haptics.selectionAsync();
+								}}
+							>
+								<Ionicons name="trash" size={22} color="red" />
+							</Pressable>
+						</View>
+					))}
+				</View>
+
+				<View>
+					<Pressable
+						className="w-full bg-fuchsia-400 rounded-lg p-4 items-center"
+						onPress={onSave}
+					>
+						<Text>Save</Text>
+					</Pressable>
+				</View>
 			</View>
-		</View>
+		</ScrollView>
 	);
 }
-
-const styles = StyleSheet.create({
-	titleContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-	},
-	stepContainer: {
-		gap: 8,
-		marginBottom: 8,
-	},
-	reactLogo: {
-		height: 178,
-		width: 290,
-		bottom: 0,
-		left: 0,
-		position: "absolute",
-	},
-});

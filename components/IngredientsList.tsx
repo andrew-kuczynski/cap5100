@@ -5,29 +5,38 @@ import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 
-function Separator() {
-	return <View className="h-2.5" collapsable={false} />;
-}
+export type IngredientDisplay = {
+	id: number;
+	name: string;
+	preferredStore: {
+		id: number;
+		name: string;
+	} | null;
+};
 
-export function RecipeList({
+export function IngredientsList({
+	data,
 	onSelect,
-}: { onSelect: (recipe: { id: number; name: string }) => void }) {
-	const { data } = useQuery(queries.recipes.list);
-
+}: {
+	data: Array<IngredientDisplay> | undefined;
+	onSelect: (ingredient: IngredientDisplay) => void;
+}) {
 	return (
 		<FlashList
 			contentContainerStyle={{ padding: 8 }}
-			ItemSeparatorComponent={Separator}
 			data={data}
+			ListHeaderComponent={
+				<View>
+					<Text>Last Made: 2023-01-01</Text>
+					<Text>Other info...</Text>
+				</View>
+			}
 			renderItem={({ item }) => (
 				<Pressable
-					className="bg-white rounded-md shadow-sm active:shadow-none px-4 py-5 flex-row gap-x-4"
+					className="bg-white rounded-md shadow-sm px-4 py-5 flex-row gap-x-4"
 					onPress={() => onSelect(item)}
 				>
 					<Text className="text-xl flex-1">{item.name}</Text>
-					<View>
-						<Ionicons name="chevron-forward" size={24} />
-					</View>
 				</Pressable>
 			)}
 			estimatedItemSize={200}

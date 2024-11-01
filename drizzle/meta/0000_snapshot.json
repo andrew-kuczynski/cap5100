@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "36302994-43bb-4387-ba04-bafd7ce1626f",
+  "id": "0a3be1fb-d77d-4990-8998-e921f62a4a76",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "recipes": {
@@ -22,7 +22,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "recipes_name_unique": {
+          "name": "recipes_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -45,7 +53,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "stores_name_unique": {
+          "name": "stores_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -75,7 +91,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "ingredients_name_unique": {
+          "name": "ingredients_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {
         "ingredients_preferredStoreId_stores_id_fk": {
           "name": "ingredients_preferredStoreId_stores_id_fk",

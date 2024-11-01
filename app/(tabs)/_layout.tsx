@@ -15,10 +15,10 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="(home)"
 				options={{
-					title: "Home",
+					title: "Week",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "home" : "home-outline"}
+							name={focused ? "calendar" : "calendar-outline"}
 							color={color}
 						/>
 					),
@@ -30,7 +30,7 @@ export default function TabLayout() {
 					title: "Recipes",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "code-slash" : "code-slash-outline"}
+							name={focused ? "book" : "book-outline"}
 							color={color}
 						/>
 					),
@@ -42,7 +42,7 @@ export default function TabLayout() {
 					title: "Grocery List",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "code-slash" : "code-slash-outline"}
+							name={focused ? "list-circle" : "list-circle-outline"}
 							color={color}
 						/>
 					),
@@ -51,12 +51,9 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="four"
 				options={{
-					title: "Tab 4",
+					title: "Settings",
 					tabBarIcon: ({ color, focused }) => (
-						<TabBarIcon
-							name={focused ? "code-slash" : "code-slash-outline"}
-							color={color}
-						/>
+						<TabBarIcon name={focused ? "cog" : "cog-outline"} color={color} />
 					),
 				}}
 			/>
