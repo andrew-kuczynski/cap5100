@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import queries from "@/utils/queries";
 import { Ionicons } from "@expo/vector-icons";
@@ -44,21 +44,25 @@ function Ingredient({
 
 			{ingredient.preferredStore ? (
 				<Pressable
+					className="border rounded-md p-2 active:bg-gray-200 flex-row justify-between w-[84px]"
+					onPress={() =>
+						router.push(`/store-select?ingredient=${ingredient.id}`)
+					}
+				>
+					<Image
+						source={{ uri: ingredient.preferredStore.icon }}
+						className="size-5"
+					/>
+					<Text>{ingredient.preferredStore.key}</Text>
+				</Pressable>
+			) : (
+				<Pressable
 					className="border rounded-md p-2 active:bg-gray-200"
 					onPress={() =>
 						router.push(`/store-select?ingredient=${ingredient.id}`)
 					}
 				>
-					<Text>{ingredient.preferredStore.name}</Text>
-				</Pressable>
-			) : (
-				<Pressable
-					className="border border-gray-400 rounded-md p-2 active:bg-gray-200"
-					onPress={() =>
-						router.push(`/store-select?ingredient=${ingredient.id}`)
-					}
-				>
-					<Text className="text-gray-400">-Select Store-</Text>
+					<Text>- Select Store -</Text>
 				</Pressable>
 			)}
 		</Pressable>

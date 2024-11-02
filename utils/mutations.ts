@@ -55,11 +55,14 @@ const recipes = {
 const ingredients = {
 	create: (data: IngredientInsert) =>
 		db.insert(ingredientsTable).values(data).returning(),
-	setPreferredStore: async (params: { id: number; storeKey: string }) => {
+	setPreferredStore: async (params: {
+		id: number;
+		storeKey: string | null | undefined;
+	}) => {
 		await db
 			.update(ingredientsTable)
 			.set({
-				preferredStoreKey: params.storeKey,
+				preferredStoreKey: params.storeKey ?? null,
 			})
 			.where(eq(ingredientsTable.id, params.id));
 

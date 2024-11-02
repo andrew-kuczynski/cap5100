@@ -4,6 +4,7 @@ import queries from "@/utils/queries";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
+import { type ReactElement, ReactNode } from "react";
 
 function Separator() {
 	return <View className="h-2.5" collapsable={false} />;
@@ -11,7 +12,11 @@ function Separator() {
 
 export function RecipeList({
 	onSelect,
-}: { onSelect: (recipe: { id: number; name: string }) => void }) {
+	header,
+}: {
+	onSelect: (recipe: { id: number; name: string }) => void;
+	header?: ReactElement;
+}) {
 	const { data } = useQuery(queries.recipes.list);
 
 	return (
@@ -19,6 +24,7 @@ export function RecipeList({
 			contentContainerStyle={{ padding: 8 }}
 			ItemSeparatorComponent={Separator}
 			data={data}
+			ListHeaderComponent={header}
 			renderItem={({ item }) => (
 				<Pressable
 					className="bg-white rounded-md shadow-sm active:shadow-none px-4 py-5 flex-row gap-x-4"

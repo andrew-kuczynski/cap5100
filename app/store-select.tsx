@@ -45,7 +45,8 @@ export default function HomeScreen() {
 		<View className="flex-1">
 			<Text>Select store for {data?.name}</Text>
 			<StoreList
-				onSelect={({ key }) => mutate({ id: ingredientId, storeKey: key })}
+				onSelect={(store) => mutate({ id: ingredientId, storeKey: store?.key })}
+				showRemove={data?.preferredStoreKey !== null}
 			/>
 		</View>
 	);

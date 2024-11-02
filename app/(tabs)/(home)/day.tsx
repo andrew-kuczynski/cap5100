@@ -1,16 +1,20 @@
-import { Button, Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 
+import { AddRecipeButton } from "@/components/AddRecipeButton";
 import { RecipeList } from "@/components/RecipeList";
 import mutations from "@/utils/mutations";
 import queries from "@/utils/queries";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { format } from "date-fns";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-export default function TabTwoScreen() {
+export default function DayScreen() {
 	const router = useRouter();
 
 	const params = useLocalSearchParams();
 	const date = new Date(Number(params.date));
+
+	const formattedDate = format(date, "eee - PP");
 
 	const { data: currentMeal } = useQuery(queries.meals.byDay(date));
 
@@ -26,15 +30,13 @@ export default function TabTwoScreen() {
 	});
 
 	return (
-		<View style={{ flex: 1 }}>
-			{currentMeal ? (
-				<View>
-					<Text>Current Meal: {currentMeal.recipe.name ?? "?"}</Text>
-				</View>
-			) : null}
-			<View>
-				<Text>Select other meal</Text>
-			</View>
+		<SafeAreaView className="flex-1 relative">
+			<Stack.Screen
+				options={{
+					title: formattedDate,
+				}}
+			/>
+
 			<RecipeList
 				onSelect={({ id: recipeId }) => {
 					mutate({
@@ -42,11 +44,23 @@ export default function TabTwoScreen() {
 						recipeId,
 					});
 				}}
+				header={
+					<View className="gap-y-4 px-2 pb-3">
+						{currentMeal ? (
+							<View>
+								<Text className="text-gray-500 text-lg">
+									Currently Selected
+								</Text>
+								<Text className="text-2xl">{currentMeal.recipe.name}</Text>
+							</View>
+						) : null}
+						<View>
+							<Text className="text-gray-500 text-lg">Select meal</Text>
+						</View>
+					</View>
+				}
 			/>
-			<Button
-				title="Add Recipe"
-				onPress={() => router.push("/recipes/create")}
-			/>
-		</View>
+			<AddRecipeButton />
+		</SafeAreaView>
 	);
 }
