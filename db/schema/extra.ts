@@ -11,7 +11,7 @@ import { recipesTable, storesTable } from "./base";
 export const ingredientsTable = sqliteTable("ingredients", {
 	id: int().primaryKey({ autoIncrement: true }),
 	name: text().notNull().unique(),
-	preferredStoreId: int().references(() => storesTable.id),
+	preferredStoreKey: text().references(() => storesTable.key),
 });
 
 export const recipeIngredientsTable = sqliteTable(
@@ -56,8 +56,8 @@ export const ingredientsRelations = relations(
 	({ many, one }) => ({
 		ingredientsToRecipes: many(recipeIngredientsTable),
 		preferredStore: one(storesTable, {
-			fields: [ingredientsTable.preferredStoreId],
-			references: [storesTable.id],
+			fields: [ingredientsTable.preferredStoreKey],
+			references: [storesTable.key],
 		}),
 	}),
 );

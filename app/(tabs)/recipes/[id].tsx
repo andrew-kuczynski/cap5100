@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import {
 	type IngredientDisplay,
@@ -11,12 +11,29 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-export default function HomeScreen() {
+function IngredientDetails({ item }: { item: IngredientDisplay }) {
+	const { data: ingredient } = useQuery({
+		...queries.ingredients.detail(item.id),
+		initialData: item,
+	});
+	return (
+		<View className="flex-row gap-x-4">
+			{ingredient.preferredStore ? (
+				<Image
+					source={{ uri: ingredient.preferredStore.icon }}
+					className="aspect-square w-12 h-12 rounded-full"
+				/>
+			) : null}
+			<Text className="text-xl">{ingredient.name}</Text>
+		</View>
+	);
+}
+
+export default function SingleRecipeScreen() {
 	const bottomSheetRef = useRef<BottomSheet>(null);
 	const { id } = useLocalSearchParams();
-	const parsed = Number(id);
 
-	const { data } = useQuery(queries.recipes.detail(parsed));
+	const { data } = useQuery(queries.recipes.detail(Number(id)));
 
 	const ingredients = data?.recipesToIngredients?.map((r) => r.ingredient);
 
@@ -33,7 +50,6 @@ export default function HomeScreen() {
 			<IngredientsList
 				data={ingredients}
 				onSelect={(ing) => {
-					// bottomSheetRef.current?.close();
 					setSelectedIngredient(ing);
 					bottomSheetRef.current?.snapToIndex(0);
 				}}
@@ -46,7 +62,9 @@ export default function HomeScreen() {
 				enablePanDownToClose
 			>
 				<BottomSheetView className="p-3">
-					<Text className="text-2xl">{selectedIngredient?.name}</Text>
+					{selectedIngredient ? (
+						<IngredientDetails item={selectedIngredient} />
+					) : null}
 				</BottomSheetView>
 			</BottomSheet>
 		</GestureHandlerRootView>

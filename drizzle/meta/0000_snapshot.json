@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0a3be1fb-d77d-4990-8998-e921f62a4a76",
+  "id": "57fc58d7-85a9-4d1f-9a95-c96e8a1a5bb4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "recipes": {
@@ -38,12 +38,19 @@
     "stores": {
       "name": "stores",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
+        "key": {
+          "name": "key",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
+        },
+        "icon": {
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         },
         "name": {
           "name": "name",
@@ -83,9 +90,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "preferredStoreId": {
-          "name": "preferredStoreId",
-          "type": "integer",
+        "preferredStoreKey": {
+          "name": "preferredStoreKey",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -101,15 +108,15 @@
         }
       },
       "foreignKeys": {
-        "ingredients_preferredStoreId_stores_id_fk": {
-          "name": "ingredients_preferredStoreId_stores_id_fk",
+        "ingredients_preferredStoreKey_stores_key_fk": {
+          "name": "ingredients_preferredStoreKey_stores_key_fk",
           "tableFrom": "ingredients",
           "tableTo": "stores",
           "columnsFrom": [
-            "preferredStoreId"
+            "preferredStoreKey"
           ],
           "columnsTo": [
-            "id"
+            "key"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"

@@ -5,7 +5,8 @@ CREATE TABLE `recipes` (
 --> statement-breakpoint
 CREATE UNIQUE INDEX `recipes_name_unique` ON `recipes` (`name`);--> statement-breakpoint
 CREATE TABLE `stores` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`key` text PRIMARY KEY NOT NULL,
+	`icon` text NOT NULL,
 	`name` text NOT NULL
 );
 --> statement-breakpoint
@@ -13,8 +14,8 @@ CREATE UNIQUE INDEX `stores_name_unique` ON `stores` (`name`);--> statement-brea
 CREATE TABLE `ingredients` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
-	`preferredStoreId` integer,
-	FOREIGN KEY (`preferredStoreId`) REFERENCES `stores`(`id`) ON UPDATE no action ON DELETE no action
+	`preferredStoreKey` text,
+	FOREIGN KEY (`preferredStoreKey`) REFERENCES `stores`(`key`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `ingredients_name_unique` ON `ingredients` (`name`);--> statement-breakpoint

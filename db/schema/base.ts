@@ -1,14 +1,8 @@
-import { relations } from "drizzle-orm";
-import {
-	int,
-	integer,
-	primaryKey,
-	sqliteTable,
-	text,
-} from "drizzle-orm/sqlite-core";
+import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const storesTable = sqliteTable("stores", {
-	id: int().primaryKey({ autoIncrement: true }),
+	key: text().primaryKey(),
+	icon: text().notNull(),
 	name: text().notNull().unique(),
 });
 

@@ -1,11 +1,13 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
+import { colors } from "@/constants/Colors";
 import { useDate, useWeekDays } from "@/hooks/date";
 import queries from "@/utils/queries";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, getDate, startOfWeek } from "date-fns";
 import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function CalDay({
 	onPress,
@@ -41,18 +43,12 @@ export default function HomeScreen() {
 
 	const date = useDate();
 
-	const { data: meals } = useQuery(
-		queries.meals.byDateRange(startOfWeek(date), endOfWeek(date)),
-	);
+	const { data: meals } = useQuery(queries.meals.byWeek(date));
 
 	return (
-		<ThemedView
-			style={{
-				flex: 1,
-				justifyContent: "center",
-				alignItems: "center",
-				paddingHorizontal: 12,
-			}}
+		<SafeAreaView
+			style={{ backgroundColor: colors.background }}
+			className="flex-1 items-center justify-center px-2"
 		>
 			<View style={{ flexDirection: "row", columnGap: 4 }}>
 				{weekDays.map((d, i) => (
@@ -72,7 +68,7 @@ export default function HomeScreen() {
 					/>
 				))}
 			</View>
-		</ThemedView>
+		</SafeAreaView>
 	);
 }
 

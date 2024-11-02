@@ -1,14 +1,14 @@
+import { GroceryList } from "@/components/GroceryList";
+import type { IngredientDisplay } from "@/components/IngredientsList";
 import { useDate } from "@/hooks/date";
 import queries from "@/utils/queries";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, startOfWeek } from "date-fns";
-import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native";
 
 export default function GroceryListScreen() {
 	const date = useDate();
-	const { data: meals } = useQuery(
-		queries.meals.byDateRange(startOfWeek(date), endOfWeek(date)),
-	);
+	const { data: meals } = useQuery(queries.meals.byWeek(date));
 
 	const ingredientsMap = meals
 		?.flatMap((m) => m.recipe.recipesToIngredients.map((r) => r.ingredient))
@@ -17,24 +17,14 @@ export default function GroceryListScreen() {
 				acc[val.id] = val;
 				return acc;
 			},
-			{} as Record<number, { id: number; name: string }>,
+			{} as Record<number, IngredientDisplay>,
 		);
 
 	const ingredients = ingredientsMap ? Object.values(ingredientsMap) : [];
 
 	return (
-		<View
-			style={{
-				borderColor: "red",
-				borderWidth: 1,
-				marginTop: 100,
-			}}
-		>
-			{ingredients.map((ingredient) => (
-				<View key={ingredient.id}>
-					<Text>{ingredient.name}</Text>
-				</View>
-			))}
-		</View>
+		<SafeAreaView className="flex-1">
+			<GroceryList data={ingredients} />
+		</SafeAreaView>
 	);
 }

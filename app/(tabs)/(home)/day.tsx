@@ -20,6 +20,7 @@ export default function TabTwoScreen() {
 		mutationFn: mutations.meals.create,
 		onSuccess: () => {
 			qc.invalidateQueries(queries.meals.byDay(date));
+			qc.invalidateQueries(queries.meals.byWeek(date));
 			router.back();
 		},
 	});

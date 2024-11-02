@@ -39,16 +39,18 @@ export default function CreateScreen() {
 	const [ingredients, setIngredients] = useState<string[]>([]);
 
 	const onSubmitName = () => {
-		Haptics.selectionAsync();
 		ingredientsInput.current?.focus();
+		Haptics.selectionAsync();
 	};
 
 	const onSubmitIngredient = () => {
+		const trimmed = ingredientValue.trim();
+
 		if (focusedIngredient !== null) {
-			if (ingredientValue) {
+			if (trimmed) {
 				setIngredients(
 					ingredients.map((existing, i) =>
-						i === focusedIngredient ? ingredientValue : existing,
+						i === focusedIngredient ? trimmed : existing,
 					),
 				);
 				Haptics.selectionAsync();
@@ -58,11 +60,12 @@ export default function CreateScreen() {
 			return;
 		}
 
-		const newIngredients = ingredientValue
-			.trim()
+		const newIngredients = trimmed
 			.split("\n")
 			.map((i) => i.trim())
 			.filter((i) => !ingredients.includes(i));
+
+		if (newIngredients.length === 0) return;
 
 		setIngredients((oldIng) => newIngredients.concat(oldIng));
 		setIngredientValue("");

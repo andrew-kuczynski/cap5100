@@ -8,13 +8,15 @@ import { useEffect } from "react";
 import { Text, View } from "react-native";
 import "react-native-reanimated";
 import "./global.css";
+import { useSeed } from "@/db/seed";
 
 const queryClient = new QueryClient();
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function App() {
+	const status = useSeed();
 	const { success, error } = useMigrations();
 
 	const [loaded] = useFonts({
@@ -22,10 +24,10 @@ export default function RootLayout() {
 	});
 
 	useEffect(() => {
-		if (loaded && success) {
+		if (loaded && success && status === "success") {
 			SplashScreen.hideAsync();
 		}
-	}, [loaded, success]);
+	}, [loaded, success, status]);
 
 	if (error) {
 		return (
@@ -35,23 +37,44 @@ export default function RootLayout() {
 		);
 	}
 
-	if (!loaded || !success) {
+	if (status === "error") {
+		return (
+			<View>
+				<Text>Seeding error</Text>
+			</View>
+		);
+	}
+
+	if (!loaded || !success || status !== "success") {
 		return null;
 	}
 
 	return (
+		<Stack>
+			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+			<Stack.Screen
+				name="modal"
+				options={{
+					presentation: "modal",
+				}}
+			/>
+			<Stack.Screen
+				name="store-select"
+				options={{
+					title: "Select Store",
+					presentation: "modal",
+				}}
+			/>
+			<Stack.Screen name="+not-found" />
+		</Stack>
+	);
+}
+
+export default function RootLayout() {
+	return (
 		<QueryClientProvider client={queryClient}>
 			<ThemeProvider value={DefaultTheme}>
-				<Stack>
-					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-					<Stack.Screen
-						name="modal"
-						options={{
-							presentation: "modal",
-						}}
-					/>
-					<Stack.Screen name="+not-found" />
-				</Stack>
+				<App />
 			</ThemeProvider>
 		</QueryClientProvider>
 	);

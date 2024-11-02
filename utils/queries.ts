@@ -13,11 +13,16 @@ const ingredients = createQueryKeys("ingredients", {
 	detail: (id: number) => ({
 		queryKey: [id],
 		queryFn: async () => {
-			return db.query.ingredientsTable
-				.findFirst({
-					where: (table, { eq }) => eq(table.id, id),
-				})
-				.then((result) => result ?? null);
+			const result = await db.query.ingredientsTable.findFirst({
+				where: (table, { eq }) => eq(table.id, id),
+				with: {
+					preferredStore: true,
+				},
+			});
+
+			if (!result) throw new Error("Ingredient not found");
+
+			return result;
 		},
 	}),
 });
@@ -72,29 +77,44 @@ const meals = createQueryKeys("meals", {
 			return result ?? null;
 		},
 	}),
-	byDateRange: (start: Date, end: Date) => ({
-		queryKey: ["week", start.valueOf(), end.valueOf()],
-		queryFn: async () => {
-			const result = await db.query.mealsTable.findMany({
-				where: (table, { gte, lte, and }) =>
-					and(gte(table.date, start), lte(table.date, end)),
-				with: {
-					recipe: {
-						with: {
-							recipesToIngredients: {
-								with: {
-									ingredient: true,
+	byWeek: (date: Date) => {
+		const start = startOfWeek(date);
+		const end = endOfWeek(date);
+		return {
+			queryKey: ["week", start.valueOf(), end.valueOf()],
+			queryFn: async () => {
+				const result = await db.query.mealsTable.findMany({
+					where: (table, { gte, lte, and }) =>
+						and(gte(table.date, start), lte(table.date, end)),
+					with: {
+						recipe: {
+							with: {
+								recipesToIngredients: {
+									with: {
+										ingredient: {
+											with: {
+												preferredStore: true,
+											},
+										},
+									},
 								},
 							},
 						},
 					},
-				},
-			});
-			return result ?? null;
-		},
-	}),
+				});
+				return result ?? null;
+			},
+		};
+	},
 });
 
-const queries = mergeQueryKeys(ingredients, recipes, meals);
+const stores = createQueryKeys("stores", {
+	list: {
+		queryKey: null,
+		queryFn: () => db.query.storesTable.findMany(),
+	},
+});
+
+const queries = mergeQueryKeys(ingredients, recipes, meals, stores);
 
 export default queries;

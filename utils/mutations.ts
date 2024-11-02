@@ -6,6 +6,7 @@ import {
 	recipeIngredientsTable,
 } from "@/db/schema/extra";
 import type { IngredientInsert, MealInsert, RecipeInsert } from "@/db/types";
+import { set } from "date-fns";
 import { eq, inArray } from "drizzle-orm";
 
 const recipes = {
@@ -54,6 +55,16 @@ const recipes = {
 const ingredients = {
 	create: (data: IngredientInsert) =>
 		db.insert(ingredientsTable).values(data).returning(),
+	setPreferredStore: async (params: { id: number; storeKey: string }) => {
+		await db
+			.update(ingredientsTable)
+			.set({
+				preferredStoreKey: params.storeKey,
+			})
+			.where(eq(ingredientsTable.id, params.id));
+
+		return true;
+	},
 	deleteAll: () => db.delete(ingredientsTable),
 };
 
