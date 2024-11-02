@@ -33,39 +33,23 @@ function Ingredient({
 		initialData: item,
 	});
 
-	const router = useRouter();
-
 	return (
-		<Pressable
-			className="bg-white rounded-md shadow-sm px-4 py-4 flex-row items-center gap-x-4"
-			onPress={() => onSelect(ingredient)}
-		>
+		<View className="bg-white rounded-md shadow-sm px-4 py-4 flex-row items-center gap-x-4">
 			<Text className="text-xl flex-1">{ingredient.name}</Text>
 
 			{ingredient.preferredStore ? (
-				<Pressable
-					className="border rounded-md p-2 active:bg-gray-200 flex-row justify-between w-[84px]"
-					onPress={() =>
-						router.push(`/store-select?ingredient=${ingredient.id}`)
-					}
-				>
+				<View className="flex-row gap-x-2 min-w-[72px]">
 					<Image
 						source={{ uri: ingredient.preferredStore.icon }}
 						className="size-5"
 					/>
 					<Text>{ingredient.preferredStore.key}</Text>
-				</Pressable>
-			) : (
-				<Pressable
-					className="border rounded-md p-2 active:bg-gray-200"
-					onPress={() =>
-						router.push(`/store-select?ingredient=${ingredient.id}`)
-					}
-				>
-					<Text>- Select Store -</Text>
-				</Pressable>
-			)}
-		</Pressable>
+				</View>
+			) : null}
+			<Pressable onPress={() => onSelect(ingredient)}>
+				<Ionicons name="ellipsis-horizontal" size={20} />
+			</Pressable>
+		</View>
 	);
 }
 

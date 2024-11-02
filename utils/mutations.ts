@@ -68,6 +68,19 @@ const ingredients = {
 
 		return true;
 	},
+	updateName: async (params: {
+		id: number;
+		name: string;
+	}) => {
+		await db
+			.update(ingredientsTable)
+			.set({
+				name: params.name,
+			})
+			.where(eq(ingredientsTable.id, params.id));
+
+		return true;
+	},
 	deleteAll: () => db.delete(ingredientsTable),
 };
 
