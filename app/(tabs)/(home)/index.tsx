@@ -1,39 +1,96 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { ThemedView } from "@/components/ThemedView";
 import { colors } from "@/constants/Colors";
 import { useDate, useWeekDays } from "@/hooks/date";
 import queries from "@/utils/queries";
 import { useQuery } from "@tanstack/react-query";
-import { endOfWeek, getDate, startOfWeek } from "date-fns";
-import { useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { format, getDate } from "date-fns";
+import { Stack, useRouter } from "expo-router";
+
+const colorClassMap = {
+	fuchsia: {
+		bg: "bg-fuchsia-100",
+		text: "text-fuchsia-950",
+	},
+	emerald: {
+		bg: "bg-emerald-100",
+		text: "text-emerald-950",
+	},
+	sky: {
+		bg: "bg-sky-100",
+		text: "text-sky-950",
+	},
+	rose: {
+		bg: "bg-rose-100",
+		text: "text-rose-950",
+	},
+	amber: {
+		bg: "bg-amber-100",
+		text: "text-amber-950",
+	},
+	violet: {
+		bg: "bg-violet-100",
+		text: "text-violet-950",
+	},
+	slate: {
+		bg: "bg-slate-100",
+		text: "text-slate-950",
+	},
+};
+
+type LabelColor = keyof typeof colorClassMap;
+
+const labelColors = Object.keys(colorClassMap) as LabelColor[];
+
+function MealLabel({ label, color }: { label: string; color: LabelColor }) {
+	const { bg, text } = colorClassMap[color];
+
+	return (
+		<View className={`w-full rounded-md p-0.5 ${bg}`}>
+			<Text
+				className={`leading-tight text-sm font-semibold ${text}`}
+				numberOfLines={3}
+			>
+				{label}
+			</Text>
+		</View>
+	);
+}
 
 function CalDay({
 	onPress,
-	label,
 	date,
 	today,
-}: { onPress: () => void; label: string; date: Date; today?: boolean }) {
+	color,
+	weekend,
+}: {
+	onPress: () => void;
+	date: Date;
+	today?: boolean;
+	color: LabelColor;
+	weekend: boolean;
+}) {
 	const day = getDate(date);
 	const { data: meal } = useQuery(queries.meals.byDay(date));
 
 	return (
-		<View style={{ flex: 1, rowGap: 4 }}>
-			<View className="bg-[#ddd] rounded-[15] h-[30] justify-center items-center">
-				<Text>{label}</Text>
-			</View>
-			<Pressable
-				className="rounded-[15] items-center aspect-square bg-[#eee] active:bg-[#ddd] aria-selected:border aria-selected:border-red-600"
+		<Pressable
+			className="flex-1 items-center active:bg-[#eee] py-2 h-32 gap-y-3 px-[2px]"
+			onPress={onPress}
+		>
+			<View
 				aria-selected={today}
-				onPress={onPress}
+				className="aria-selected:bg-red-500 bg-transparent rounded-full size-11 items-center justify-center"
 			>
-				<View style={{ flex: 2 }}>
-					<Text>{meal?.recipe?.name ?? "?"}</Text>
-				</View>
-				<Text style={{ flex: 1 }}>{day}</Text>
-			</Pressable>
-		</View>
+				<Text
+					aria-selected={today}
+					className={`aria-selected:text-white text-xl aria-selected:font-bold font-semibold ${weekend && !today ? "opacity-50" : ""}`}
+				>
+					{day}
+				</Text>
+			</View>
+			{meal ? <MealLabel label={meal.recipe.name} color={color} /> : null}
+		</Pressable>
 	);
 }
 
@@ -43,20 +100,30 @@ export default function HomeScreen() {
 
 	const date = useDate();
 
-	const { data: meals } = useQuery(queries.meals.byWeek(date));
-
 	return (
-		<SafeAreaView
+		<View
 			style={{ backgroundColor: colors.background }}
-			className="flex-1 items-center justify-center px-2"
+			className="flex-1 items-center justify-center"
 		>
-			<View style={{ flexDirection: "row", columnGap: 4 }}>
+			<Stack.Screen options={{ title: format(date, "LLLL") }} />
+			<View className="flex-row items-center py-1">
+				{weekDays.map((d) => (
+					<View
+						key={d.id}
+						className={`flex-1 items-center ${d.isWeekend ? "opacity-50" : ""}`}
+					>
+						<Text className="text-xs">{d.dayDisplay}</Text>
+					</View>
+				))}
+			</View>
+			<View className="flex-row border-t-hairline border-b-hairline border-gray-300 bg-white">
 				{weekDays.map((d, i) => (
 					<CalDay
 						key={d.id}
-						label={d.dayDisplay}
 						date={d.date}
 						today={d.isToday}
+						color={labelColors[d.weekDay]}
+						weekend={d.isWeekend}
 						onPress={() =>
 							router.push({
 								pathname: "/day",
@@ -68,25 +135,6 @@ export default function HomeScreen() {
 					/>
 				))}
 			</View>
-		</SafeAreaView>
+		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	titleContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-	},
-	stepContainer: {
-		gap: 8,
-		marginBottom: 8,
-	},
-	reactLogo: {
-		height: 178,
-		width: 290,
-		bottom: 0,
-		left: 0,
-		position: "absolute",
-	},
-});

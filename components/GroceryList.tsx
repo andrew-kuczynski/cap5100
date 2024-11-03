@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import { colors } from "@/constants/Colors";
 import { FlashList } from "@shopify/flash-list";
@@ -6,7 +6,18 @@ import Checkbox from "expo-checkbox";
 import { useMemo, useState } from "react";
 import type { IngredientDisplay } from "./IngredientsList";
 
-function Separator() {
+function Separator(props: {
+	leadingItem?: IngredientDisplay | string;
+	trailingItem?: IngredientDisplay | string;
+}) {
+	if (typeof props.leadingItem === "string") {
+		return null;
+	}
+
+	if (typeof props.trailingItem === "string") {
+		return <View className="h-10" collapsable={false} />;
+	}
+
 	return <View className="h-2.5" collapsable={false} />;
 }
 
@@ -55,30 +66,55 @@ export function GroceryList({
 		return result;
 	}, [data]);
 
+	const stickyHeaderIndices = groupedFlatList.reduce((acc, val, index) => {
+		if (typeof val === "string") {
+			acc.push(index);
+		}
+		return acc;
+	}, [] as number[]);
+
 	return (
 		<FlashList
-			contentContainerStyle={{ padding: 8 }}
 			ItemSeparatorComponent={Separator}
-			data={data}
+			stickyHeaderIndices={stickyHeaderIndices}
+			data={groupedFlatList}
 			extraData={checkedMap}
-			renderItem={({ item, extraData }) => {
+			getItemType={(item) => {
+				return typeof item === "string" ? "sectionHeader" : "row";
+			}}
+			renderItem={({ item, extraData, target }) => {
+				if (typeof item === "string") {
+					const store = storeMap[item];
+
+					return (
+						<View className="px-3 py-3 flex-row gap-x-3 items-center bg-[#F2F2F2]">
+							{store ? (
+								<Image source={{ uri: store.icon }} className="size-7" />
+							) : null}
+							<Text className="text-xl">{store?.name ?? "Other"}</Text>
+						</View>
+					);
+				}
+
 				const checked = !!extraData[item.id];
 
 				return (
-					<Pressable
-						className="bg-white rounded-md shadow-sm active:shadow-none px-4 py-5 flex-row gap-x-4"
-						onPress={() => toggleCheck(item.id, !checked)}
-					>
-						<Text className="text-xl flex-1">{item.name}</Text>
-						<View>
-							<Checkbox
-								style={{}}
-								value={checked}
-								onValueChange={(c) => toggleCheck(item.id, c)}
-								color={checked ? colors.tabIconSelected : undefined}
-							/>
-						</View>
-					</Pressable>
+					<View className="px-1">
+						<Pressable
+							className="bg-white rounded-md shadow-sm active:shadow-none px-4 py-5 flex-row gap-x-4"
+							onPress={() => toggleCheck(item.id, !checked)}
+						>
+							<Text className="text-xl flex-1">{item.name}</Text>
+							<View>
+								<Checkbox
+									style={{}}
+									value={checked}
+									onValueChange={(c) => toggleCheck(item.id, c)}
+									color={checked ? colors.tabIconSelected : undefined}
+								/>
+							</View>
+						</Pressable>
+					</View>
 				);
 			}}
 			estimatedItemSize={200}

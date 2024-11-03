@@ -40,6 +40,8 @@ export default function TabLayout() {
 				name="grocery-list"
 				options={{
 					title: "Grocery List",
+					headerShown: true,
+
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
 							name={focused ? "list-circle" : "list-circle-outline"}

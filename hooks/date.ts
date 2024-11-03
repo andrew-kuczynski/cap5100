@@ -8,6 +8,7 @@ import {
 	getWeek,
 	getYear,
 	isSameDay,
+	isWeekend,
 	startOfDay,
 	startOfWeek,
 } from "date-fns";
@@ -43,9 +44,11 @@ export const useWeekDays = () => {
 		return {
 			id: dayDate.valueOf(),
 			date: dayDate,
-			dayDisplay: format(dayDate, "eee"),
+			dayDisplay: format(dayDate, "EEEEE"),
 			fullDisplay: format(dayDate, "PPpp"),
 			isToday: isSameDay(dayDate, date),
+			weekDay: getDay(dayDate),
+			isWeekend: isWeekend(dayDate),
 		};
 	});
 };
