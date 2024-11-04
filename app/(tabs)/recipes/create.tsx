@@ -163,10 +163,11 @@ export default function CreateScreen() {
 
 				<View>
 					<Pressable
-						className="w-full bg-fuchsia-400 rounded-lg p-4 items-center"
+						style={{ backgroundColor: colors.tabIconSelected }}
+						className="w-full rounded-lg p-3 items-center"
 						onPress={onSave}
 					>
-						<Text>Save</Text>
+						<Text className="text-white text-2xl">Save</Text>
 					</Pressable>
 				</View>
 			</View>

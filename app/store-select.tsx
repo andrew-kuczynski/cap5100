@@ -28,6 +28,9 @@ export default function HomeScreen() {
 	const { mutate } = useMutation({
 		mutationFn: mutations.ingredients.setPreferredStore,
 		onSuccess(result, variables) {
+			qc.invalidateQueries({
+				queryKey: queries.meals.byWeek._def,
+			});
 			qc.invalidateQueries(queries.ingredients.detail(variables.id));
 			router.back();
 		},
