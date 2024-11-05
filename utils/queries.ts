@@ -3,7 +3,7 @@ import {
 	createQueryKeys,
 	mergeQueryKeys,
 } from "@lukemorales/query-key-factory";
-import { endOfWeek, startOfWeek } from "date-fns";
+import { endOfWeek, startOfDay, startOfWeek } from "date-fns";
 
 const ingredients = createQueryKeys("ingredients", {
 	list: {
@@ -56,27 +56,31 @@ const recipes = createQueryKeys("recipes", {
 });
 
 const meals = createQueryKeys("meals", {
-	byDay: (date: Date) => ({
-		queryKey: ["day", date.valueOf()],
-		queryFn: async () => {
-			const result = await db.query.mealsTable.findFirst({
-				where: (table, { eq }) => eq(table.date, date),
-				with: {
-					recipe: {
-						with: {
-							recipesToIngredients: {
-								with: {
-									ingredient: true,
+	byDay: (d: Date) => {
+		const date = startOfDay(d);
+
+		return {
+			queryKey: ["day", date.valueOf()],
+			queryFn: async () => {
+				const result = await db.query.mealsTable.findFirst({
+					where: (table, { eq }) => eq(table.date, date),
+					with: {
+						recipe: {
+							with: {
+								recipesToIngredients: {
+									with: {
+										ingredient: true,
+									},
 								},
 							},
 						},
 					},
-				},
-			});
+				});
 
-			return result ?? null;
-		},
-	}),
+				return result ?? null;
+			},
+		};
+	},
 	byWeek: (date: Date) => {
 		const start = startOfWeek(date);
 		const end = endOfWeek(date);

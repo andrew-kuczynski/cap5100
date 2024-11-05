@@ -1,5 +1,6 @@
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
+import Button from "@/components/Button";
 import { colors } from "@/constants/Colors";
 import mutations from "@/utils/mutations";
 import queries from "@/utils/queries";
@@ -120,21 +121,18 @@ export default function CreateScreen() {
 							blurOnSubmit={false}
 							returnKeyType="next"
 						/>
-						<Pressable
-							onPress={onSubmitIngredient}
-							className="absolute right-0 top-0 h-full aspect-square p-1"
-						>
-							<View
-								style={{ backgroundColor: colors.tabIconSelected }}
-								className="rounded-lg items-center justify-center h-full w-full"
+						<View className="absolute right-0 top-0 h-full aspect-square p-1">
+							<Button
+								onPress={onSubmitIngredient}
+								className="rounded-lg items-center justify-center h-full w-full bg-sky-500"
 							>
 								<Ionicons
 									name={focusedIngredient === null ? "add" : "checkmark"}
 									size={24}
 									color="white"
 								/>
-							</View>
-						</Pressable>
+							</Button>
+						</View>
 					</View>
 					{ingredients.map((ingredient, i) => (
 						<View
@@ -162,13 +160,9 @@ export default function CreateScreen() {
 				</View>
 
 				<View>
-					<Pressable
-						style={{ backgroundColor: colors.tabIconSelected }}
-						className="w-full rounded-lg p-3 items-center"
-						onPress={onSave}
-					>
+					<Button className="w-full bg-sky-500 py-4" onPress={onSave}>
 						<Text className="text-white text-2xl">Save</Text>
-					</Pressable>
+					</Button>
 				</View>
 			</View>
 		</ScrollView>

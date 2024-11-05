@@ -12,7 +12,8 @@ export default function DayScreen() {
 	const router = useRouter();
 
 	const params = useLocalSearchParams();
-	const date = new Date(Number(params.date));
+	const id = Number(params.date);
+	const date = new Date(id);
 
 	const formattedDate = format(date, "eee - PP");
 

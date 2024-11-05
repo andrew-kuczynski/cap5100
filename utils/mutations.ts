@@ -7,7 +7,7 @@ import {
 } from "@/db/schema/extra";
 import type { IngredientInsert, MealInsert, RecipeInsert } from "@/db/types";
 import { set } from "date-fns";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 
 const recipes = {
 	create: async (data: RecipeInsert & { ingredients: string[] }) => {
@@ -97,6 +97,37 @@ const meals = {
 	delete: (date: Date) =>
 		db.delete(mealsTable).where(eq(mealsTable.date, date)),
 	deleteAll: () => db.delete(mealsTable),
+	createRandom: async (dates: Date[]) => {
+		if (dates.length === 0) return;
+
+		const allRecipes = await db
+			.select({ id: recipesTable.id })
+			.from(recipesTable)
+			.orderBy(sql`RANDOM()`)
+			.limit(dates.length);
+
+		if (allRecipes.length < dates.length) {
+			const neededRecipes = dates.length - allRecipes.length;
+			for (let i = 0; i < neededRecipes; i++) {
+				const randIndex = Math.floor(Math.random() * allRecipes.length);
+				const recipe = allRecipes[randIndex];
+				allRecipes.push(recipe);
+			}
+		}
+
+		await db
+			.insert(mealsTable)
+			.values(
+				dates.map((date, i) => ({
+					date,
+					recipeId: allRecipes[i].id,
+				})),
+			)
+			.onConflictDoUpdate({
+				target: mealsTable.date,
+				set: { recipeId: sql.raw(`excluded.${mealsTable.recipeId.name}`) },
+			});
+	},
 };
 
 export default {

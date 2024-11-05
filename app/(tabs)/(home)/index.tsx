@@ -1,11 +1,17 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 
+import Button from "@/components/Button";
 import { colors } from "@/constants/Colors";
 import { useDate, useWeekDays } from "@/hooks/date";
+import mutations from "@/utils/mutations";
 import queries from "@/utils/queries";
-import { useQuery } from "@tanstack/react-query";
-import { format, getDate } from "date-fns";
+import { useSetWeekLockMap, useWeekDiff, useWeekLockMap } from "@/utils/state";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { format, getDate, getWeek, startOfDay } from "date-fns";
 import { Stack, useRouter } from "expo-router";
+import { useEffect } from "react";
+import { useSetWeekDiff } from "../../../utils/state";
 
 const colorClassMap = {
 	fuchsia: {
@@ -58,24 +64,31 @@ function MealLabel({ label, color }: { label: string; color: LabelColor }) {
 }
 
 function CalDay({
+	weekDay,
 	onPress,
 	date,
 	today,
-	color,
 	weekend,
 }: {
 	onPress: () => void;
+	weekDay: number;
 	date: Date;
 	today?: boolean;
-	color: LabelColor;
 	weekend: boolean;
 }) {
 	const day = getDate(date);
 	const { data: meal } = useQuery(queries.meals.byDay(date));
 
+	const setWeekLock = useSetWeekLockMap();
+	const mealId = meal?.recipeId;
+
+	useEffect(() => {
+		setWeekLock((prev) => ({ ...prev, [weekDay]: !!mealId }));
+	}, [mealId, weekDay, setWeekLock]);
+
 	return (
 		<Pressable
-			className="flex-1 items-center active:bg-[#eee] py-2 h-32 gap-y-3 px-[2px]"
+			className="flex-1 border-t-hairline border-b-hairline border-gray-300 bg-white items-center active:bg-[#eee] py-2 h-32 gap-y-3 px-[2px]"
 			onPress={onPress}
 		>
 			<View
@@ -89,7 +102,9 @@ function CalDay({
 					{day}
 				</Text>
 			</View>
-			{meal ? <MealLabel label={meal.recipe.name} color={color} /> : null}
+			{meal ? (
+				<MealLabel label={meal.recipe.name} color={labelColors[weekDay]} />
+			) : null}
 		</Pressable>
 	);
 }
@@ -100,41 +115,143 @@ export default function HomeScreen() {
 
 	const date = useDate();
 
+	const weekDiff = useWeekDiff();
+	const weekNum = getWeek(date) + weekDiff;
+
+	const { data: todaysMeal } = useQuery(queries.meals.byDay(startOfDay(date)));
+
+	const setWeekLock = useSetWeekLockMap();
+	const weekLock = useWeekLockMap();
+	const setWeekDiff = useSetWeekDiff();
+
+	const qc = useQueryClient();
+	const { mutate: assignRandomMeals } = useMutation({
+		mutationFn: mutations.meals.createRandom,
+		onError: (error) => {
+			console.error(error);
+		},
+		onSuccess: (result, dates) => {
+			if (dates && dates.length > 0) {
+				qc.invalidateQueries(queries.meals.byWeek(dates[0]));
+
+				// biome-ignore lint/complexity/noForEach: <explanation>
+				dates.forEach((d) => qc.invalidateQueries(queries.meals.byDay(d)));
+			}
+		},
+	});
+
+	const onRandomize = () => {
+		const daysThatNeedRandomAssignment = weekDays
+			.filter((d) => !weekLock[d.weekDay])
+			.map((d) => d.date);
+
+		assignRandomMeals(daysThatNeedRandomAssignment);
+	};
+
 	return (
-		<View
+		<SafeAreaView
 			style={{ backgroundColor: colors.background }}
 			className="flex-1 items-center justify-center"
 		>
-			<Stack.Screen options={{ title: format(date, "LLLL") }} />
-			<View className="flex-row items-center py-1">
-				{weekDays.map((d) => (
-					<View
-						key={d.id}
-						className={`flex-1 items-center ${d.isWeekend ? "opacity-50" : ""}`}
+			<View className="flex-1 justify-center w-full px-2 py-4">
+				<View className="gap-y-4">
+					<Text className="text-4xl">{format(date, "eeee, PP")}</Text>
+					<Text className="px-1">What's for dinner?</Text>
+					<Pressable className="border-hairline py-3 bg-white items-center justify-center">
+						<Text className="text-2xl">{todaysMeal?.recipe?.name}</Text>
+					</Pressable>
+				</View>
+			</View>
+			<View className="w-full justify-center flex-1 gap-y-4">
+				<View className="flex-row items-center justify-center gap-x-5 px-2">
+					<View className="flex-1" />
+					<Button
+						className="p-2"
+						onPress={() => setWeekDiff((prev) => prev - 1)}
 					>
-						<Text className="text-xs">{d.dayDisplay}</Text>
+						<Ionicons name="arrow-back" size={20} color="black" />
+					</Button>
+					<Text className="text-xl">Week {weekNum}</Text>
+					<Button
+						className="p-2"
+						onPress={() => setWeekDiff((prev) => prev + 1)}
+					>
+						<Ionicons name="arrow-forward" size={20} color="black" />
+					</Button>
+					<View className="flex-1 flex-row justify-end">
+						{weekDiff !== 0 ? (
+							<Button className="p-2" onPress={() => setWeekDiff(0)}>
+								<Ionicons name="return-down-back" size={20} color="black" />
+							</Button>
+						) : null}
 					</View>
-				))}
+				</View>
+				<View>
+					<View className="flex-row items-center py-1">
+						{weekDays.map((d) => (
+							<View
+								key={d.id}
+								className={`flex-1 items-center ${d.isWeekend ? "opacity-50" : ""}`}
+							>
+								<Text className="text-xs">{d.dayDisplay}</Text>
+							</View>
+						))}
+					</View>
+					<View className="flex-row">
+						{weekDays.map((d) => {
+							return (
+								<CalDay
+									key={d.id}
+									date={d.date}
+									today={d.isToday}
+									weekend={d.isWeekend}
+									weekDay={d.weekDay}
+									onPress={() =>
+										router.push({
+											pathname: "/day",
+											params: {
+												date: d.id,
+											},
+										})
+									}
+								/>
+							);
+						})}
+					</View>
+				</View>
+				<View className="flex-row">
+					{weekDays.map((d) => {
+						const isLocked = !!weekLock[d.weekDay];
+
+						return (
+							<View className="px-3 flex-1" key={d.id}>
+								<Button
+									className="aspect-square"
+									onPress={() =>
+										setWeekLock((prev) => ({
+											...prev,
+											[d.weekDay]: !isLocked,
+										}))
+									}
+								>
+									<Ionicons
+										name={isLocked ? "lock-closed" : "lock-open-outline"}
+										size={18}
+										color="black"
+									/>
+								</Button>
+							</View>
+						);
+					})}
+				</View>
 			</View>
-			<View className="flex-row border-t-hairline border-b-hairline border-gray-300 bg-white">
-				{weekDays.map((d, i) => (
-					<CalDay
-						key={d.id}
-						date={d.date}
-						today={d.isToday}
-						color={labelColors[d.weekDay]}
-						weekend={d.isWeekend}
-						onPress={() =>
-							router.push({
-								pathname: "/day",
-								params: {
-									date: d.id,
-								},
-							})
-						}
-					/>
-				))}
+			<View className="flex-1 w-full px-2 py-12">
+				<Button className="gap-x-5 flex-row py-3" onPress={onRandomize}>
+					<Ionicons name="shuffle" size={22} color="transparent" />
+					<Text className="text-xl">Randomize</Text>
+					<Ionicons name="shuffle" size={22} color="black" />
+				</Button>
 			</View>
-		</View>
+		</SafeAreaView>
 	);
 }

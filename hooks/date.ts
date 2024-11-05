@@ -1,6 +1,7 @@
 import {
 	type Day,
 	addDays,
+	addWeeks,
 	format,
 	getDate,
 	getDay,
@@ -13,6 +14,7 @@ import {
 	startOfWeek,
 } from "date-fns";
 import { useEffect, useState } from "react";
+import { useWeekDiff } from "../utils/state";
 
 export const useDate = () => {
 	const [date, setDate] = useState(Date.now());
@@ -35,7 +37,12 @@ const days = Array.from({ length: 7 }, (_, i) => i);
 const weekStartsOn: Day = 0;
 
 export const useWeekDays = () => {
-	const date = useDate();
+	const current = useDate();
+
+	const weekDiff = useWeekDiff();
+
+	const date = addWeeks(current, weekDiff);
+
 	const weekStart = startOfWeek(date, { weekStartsOn });
 
 	return days.map((d) => {
@@ -46,7 +53,7 @@ export const useWeekDays = () => {
 			date: dayDate,
 			dayDisplay: format(dayDate, "EEEEE"),
 			fullDisplay: format(dayDate, "PPpp"),
-			isToday: isSameDay(dayDate, date),
+			isToday: isSameDay(dayDate, current),
 			weekDay: getDay(dayDate),
 			isWeekend: isWeekend(dayDate),
 		};
