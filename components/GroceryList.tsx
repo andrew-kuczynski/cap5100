@@ -82,7 +82,7 @@ export function GroceryList({
 			getItemType={(item) => {
 				return typeof item === "string" ? "sectionHeader" : "row";
 			}}
-			renderItem={({ item, extraData, target }) => {
+			renderItem={({ item, extraData }) => {
 				if (typeof item === "string") {
 					const store = storeMap[item];
 
@@ -101,18 +101,16 @@ export function GroceryList({
 				return (
 					<View className="px-1">
 						<Pressable
-							className="bg-white rounded-md shadow-sm active:shadow-none px-4 py-5 flex-row gap-x-4"
+							className="bg-white rounded-md shadow-sm active:shadow-none px-4 py-5 flex-row gap-x-4 items-ce"
 							onPress={() => toggleCheck(item.id, !checked)}
 						>
 							<Text className="text-xl flex-1">{item.name}</Text>
-							<View>
-								<Checkbox
-									style={{}}
-									value={checked}
-									onValueChange={(c) => toggleCheck(item.id, c)}
-									color={checked ? colors.tabIconSelected : undefined}
-								/>
-							</View>
+							<Checkbox
+								style={{}}
+								value={checked}
+								onValueChange={(c) => toggleCheck(item.id, c)}
+								color={checked ? colors.tabIconSelected : undefined}
+							/>
 						</Pressable>
 					</View>
 				);
