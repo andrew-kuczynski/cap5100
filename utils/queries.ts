@@ -110,6 +110,16 @@ const meals = createQueryKeys("meals", {
 			},
 		};
 	},
+	hasAny: {
+		queryKey: null,
+		queryFn: async () => {
+			const result = await db.query.mealsTable.findMany({
+				columns: { date: true },
+				limit: 1,
+			});
+			return result.length > 0;
+		},
+	},
 });
 
 const stores = createQueryKeys("stores", {

@@ -7,13 +7,6 @@ export default function Layout() {
 				name="index"
 				options={{ title: "Recipes", headerShown: true }}
 			/>
-			<Stack.Screen
-				name="create"
-				options={{
-					title: "Add Recipe",
-					presentation: "modal",
-				}}
-			/>
 		</Stack>
 	);
 }

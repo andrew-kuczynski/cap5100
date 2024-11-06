@@ -26,6 +26,7 @@ export default function DayScreen() {
 		onSuccess: () => {
 			qc.invalidateQueries(queries.meals.byDay(date));
 			qc.invalidateQueries(queries.meals.byWeek(date));
+			qc.invalidateQueries(queries.meals.hasAny);
 			router.back();
 		},
 	});

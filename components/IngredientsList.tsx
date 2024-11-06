@@ -65,12 +65,12 @@ export function IngredientsList({
 			contentContainerStyle={{ padding: 8 }}
 			data={data}
 			ItemSeparatorComponent={Separator}
-			ListHeaderComponent={
-				<View>
-					<Text>Last Made: 2023-01-01</Text>
-					<Text>Other info...</Text>
-				</View>
-			}
+			// ListHeaderComponent={
+			// 	<View>
+			// 		<Text>Last Made: 2023-01-01</Text>
+			// 		<Text>Other info...</Text>
+			// 	</View>
+			// }
 			renderItem={({ item }) => <Ingredient item={item} onSelect={onSelect} />}
 			estimatedItemSize={200}
 		/>

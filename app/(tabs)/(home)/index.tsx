@@ -79,6 +79,11 @@ function CalDay({
 	const day = getDate(date);
 	const { data: meal } = useQuery(queries.meals.byDay(date));
 
+	const { data: hasAnyMeals } = useQuery({
+		...queries.meals.hasAny,
+		initialData: true,
+	});
+
 	const setWeekLock = useSetWeekLockMap();
 	const mealId = meal?.recipeId;
 
@@ -104,6 +109,11 @@ function CalDay({
 			</View>
 			{meal ? (
 				<MealLabel label={meal.recipe.name} color={labelColors[weekDay]} />
+			) : null}
+			{today && !hasAnyMeals ? (
+				<View>
+					<Text className="italic">Tap to set meal</Text>
+				</View>
 			) : null}
 		</Pressable>
 	);
@@ -133,10 +143,9 @@ export default function HomeScreen() {
 		onSuccess: (result, dates) => {
 			if (dates && dates.length > 0) {
 				qc.invalidateQueries(queries.meals.byWeek(dates[0]));
-
-				// biome-ignore lint/complexity/noForEach: <explanation>
-				dates.forEach((d) => qc.invalidateQueries(queries.meals.byDay(d)));
+				dates.map((d) => qc.invalidateQueries(queries.meals.byDay(d)));
 			}
+			qc.invalidateQueries(queries.meals.hasAny);
 		},
 	});
 
@@ -156,15 +165,43 @@ export default function HomeScreen() {
 			<View className="flex-1 justify-center w-full px-2 py-4">
 				<View className="gap-y-4">
 					<Text className="text-4xl">{format(date, "eeee, PP")}</Text>
-					<Text className="px-1">What's for dinner?</Text>
-					<Pressable className="border-hairline py-3 bg-white items-center justify-center">
-						<Text className="text-2xl">{todaysMeal?.recipe?.name}</Text>
+					<Pressable
+						className="border-hairline rounded-lg px-3 py-2 gap-y-2 bg-white active:bg-gray-100"
+						onPress={() => {
+							if (todaysMeal) {
+								router.push(`/recipes/${todaysMeal.recipeId}`);
+								return;
+							}
+
+							const todayId = startOfDay(date).valueOf();
+
+							router.push({
+								pathname: "/day",
+								params: {
+									date: todayId,
+								},
+							});
+						}}
+					>
+						<Text className="text-lg">What's for Dinner?</Text>
+
+						<View className="border-b mb-1 items-center">
+							<Text className="text-3xl">
+								{todaysMeal?.recipe?.name ?? " "}
+							</Text>
+						</View>
 					</Pressable>
 				</View>
 			</View>
 			<View className="w-full justify-center flex-1 gap-y-4">
-				<View className="flex-row items-center justify-center gap-x-5 px-2">
-					<View className="flex-1" />
+				<View className="flex-row items-center justify-center gap-x-8 px-2">
+					<View className="flex-1 flex-row justify-start">
+						{weekDiff < 0 ? (
+							<Button className="p-2" onPress={() => setWeekDiff(0)}>
+								<Ionicons name="return-down-forward" size={20} color="black" />
+							</Button>
+						) : null}
+					</View>
 					<Button
 						className="p-2"
 						onPress={() => setWeekDiff((prev) => prev - 1)}
@@ -179,7 +216,7 @@ export default function HomeScreen() {
 						<Ionicons name="arrow-forward" size={20} color="black" />
 					</Button>
 					<View className="flex-1 flex-row justify-end">
-						{weekDiff !== 0 ? (
+						{weekDiff > 0 ? (
 							<Button className="p-2" onPress={() => setWeekDiff(0)}>
 								<Ionicons name="return-down-back" size={20} color="black" />
 							</Button>

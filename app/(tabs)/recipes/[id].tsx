@@ -9,6 +9,7 @@ import queries from "@/utils/queries";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { set } from "date-fns";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { type ReactNode, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -108,8 +109,16 @@ export default function SingleRecipeScreen() {
 			<IngredientsList
 				data={ingredients}
 				onSelect={(ing) => {
-					setSelectedIngredient(ing);
-					bottomSheetRef.current?.snapToIndex(0);
+					if (selectedIngredient) {
+						bottomSheetRef.current?.close();
+						setTimeout(() => {
+							bottomSheetRef.current?.snapToIndex(0);
+							setSelectedIngredient(ing);
+						}, 200);
+					} else {
+						bottomSheetRef.current?.snapToIndex(0);
+						setSelectedIngredient(ing);
+					}
 				}}
 			/>
 			<BottomSheet
@@ -118,6 +127,7 @@ export default function SingleRecipeScreen() {
 				enableDynamicSizing={false}
 				snapPoints={["33%"]}
 				enablePanDownToClose
+				onClose={() => setSelectedIngredient(null)}
 			>
 				<BottomSheetView className="px-4">
 					{selectedIngredient ? (

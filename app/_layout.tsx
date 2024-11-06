@@ -65,6 +65,13 @@ function App() {
 					presentation: "modal",
 				}}
 			/>
+			<Stack.Screen
+				name="create-recipe"
+				options={{
+					title: "Create Recipe",
+					presentation: "modal",
+				}}
+			/>
 			<Stack.Screen name="+not-found" />
 		</Stack>
 	);

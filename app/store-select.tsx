@@ -46,10 +46,14 @@ export default function HomeScreen() {
 
 	return (
 		<View className="flex-1">
-			<Text>Select store for {data?.name}</Text>
 			<StoreList
 				onSelect={(store) => mutate({ id: ingredientId, storeKey: store?.key })}
 				showRemove={data?.preferredStoreKey !== null}
+				header={
+					<View className="px-2 py-4">
+						<Text className="text-xl">Where do you buy "{data?.name}"?</Text>
+					</View>
+				}
 			/>
 		</View>
 	);

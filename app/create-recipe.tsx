@@ -1,7 +1,13 @@
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import {
+	Alert,
+	Pressable,
+	ScrollView,
+	Text,
+	TextInput,
+	View,
+} from "react-native";
 
 import Button from "@/components/Button";
-import { colors } from "@/constants/Colors";
 import mutations from "@/utils/mutations";
 import queries from "@/utils/queries";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -30,13 +36,9 @@ export default function CreateScreen() {
 	});
 
 	const [name, setName] = useState("");
-	const [tempIngredientValue, setTempIngredientValue] = useState("");
 
 	const [ingredientValue, setIngredientValue] = useState("");
 
-	const [focusedIngredient, setFocusedIngredient] = useState<number | null>(
-		null,
-	);
 	const [ingredients, setIngredients] = useState<string[]>([]);
 
 	const onSubmitName = () => {
@@ -47,17 +49,8 @@ export default function CreateScreen() {
 	const onSubmitIngredient = () => {
 		const trimmed = ingredientValue.trim();
 
-		if (focusedIngredient !== null) {
-			if (trimmed) {
-				setIngredients(
-					ingredients.map((existing, i) =>
-						i === focusedIngredient ? trimmed : existing,
-					),
-				);
-				Haptics.selectionAsync();
-			}
-			setFocusedIngredient(null);
-			setIngredientValue(tempIngredientValue);
+		if (!trimmed) {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 			return;
 		}
 
@@ -74,13 +67,32 @@ export default function CreateScreen() {
 	};
 
 	const onIngredientPress = (i: number) => () => {
-		setFocusedIngredient(i);
-		setTempIngredientValue(ingredientValue);
-		setIngredientValue(ingredients[i]);
-		ingredientsInput.current?.focus();
+		Alert.prompt(
+			"Update ingredient name",
+			undefined,
+			(name) =>
+				setIngredients((old) => {
+					if (name) {
+						return old.map((ing, j) => (i === j ? name : ing));
+					}
+					return old.filter((_, j) => j !== i);
+				}),
+			undefined,
+			ingredients[i],
+		);
 	};
 
 	const onSave = () => {
+		if (!name) {
+			nameInput.current?.focus();
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+			return;
+		}
+		if (ingredients.length === 0) {
+			ingredientsInput.current?.focus();
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+			return;
+		}
 		mutate({ name, ingredients });
 	};
 
@@ -107,13 +119,13 @@ export default function CreateScreen() {
 				</View>
 
 				<View className="gap-y-6">
-					<View>
+					<View className="flex-row gap-x-4">
 						<TextInput
 							ref={ingredientsInput}
 							value={ingredientValue}
 							onChangeText={setIngredientValue}
 							style={{ fontSize: 24 }}
-							className="border-hairline rounded-lg p-2"
+							className="border-hairline rounded-lg p-2 flex-1"
 							placeholderTextColor="gray"
 							placeholder="Ingredients(s)"
 							onSubmitEditing={onSubmitIngredient}
@@ -121,18 +133,12 @@ export default function CreateScreen() {
 							blurOnSubmit={false}
 							returnKeyType="next"
 						/>
-						<View className="absolute right-0 top-0 h-full aspect-square p-1">
-							<Button
-								onPress={onSubmitIngredient}
-								className="rounded-lg items-center justify-center h-full w-full bg-sky-500"
-							>
-								<Ionicons
-									name={focusedIngredient === null ? "add" : "checkmark"}
-									size={24}
-									color="white"
-								/>
-							</Button>
-						</View>
+						<Button
+							onPress={onSubmitIngredient}
+							className="aspect-square bg-sky-500"
+						>
+							<Ionicons name="add" size={24} color="white" />
+						</Button>
 					</View>
 					{ingredients.map((ingredient, i) => (
 						<View

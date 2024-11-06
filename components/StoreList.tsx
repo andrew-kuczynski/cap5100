@@ -5,6 +5,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import type { ReactElement } from "react";
+import Button from "./Button";
 
 function Separator() {
 	return <View className="h-2.5" collapsable={false} />;
@@ -13,9 +15,11 @@ function Separator() {
 export function StoreList({
 	onSelect,
 	showRemove,
+	header,
 }: {
 	onSelect: (store: { key: string; name: string } | null) => void;
 	showRemove?: boolean;
+	header?: ReactElement;
 }) {
 	const router = useRouter();
 	const { data } = useQuery(queries.stores.list);
@@ -24,6 +28,7 @@ export function StoreList({
 		<FlashList
 			contentContainerStyle={{ padding: 8 }}
 			ItemSeparatorComponent={Separator}
+			ListHeaderComponent={header}
 			data={data}
 			renderItem={({ item }) => (
 				<Pressable
@@ -42,19 +47,13 @@ export function StoreList({
 			ListFooterComponent={
 				<View className="pt-12 gap-y-8">
 					{showRemove && (
-						<Pressable
-							className="rounded-lg border border-red-500 active:bg-red-100 items-center py-4"
-							onPress={() => onSelect(null)}
-						>
-							<Text className="text-xl text-red-500">Remove Store</Text>
-						</Pressable>
+						<Button className="bg-red-200 py-4" onPress={() => onSelect(null)}>
+							<Text className="text-xl">Remove Store</Text>
+						</Button>
 					)}
-					<Pressable
-						className="rounded-lg border border-black active:bg-gray-100 items-center py-4"
-						onPress={() => router.back()}
-					>
-						<Text className="text-xl">Cancel</Text>
-					</Pressable>
+					<Button className="py-4  bg-slate-200" onPress={() => router.back()}>
+						<Text className="text-xl">Nevermind</Text>
+					</Button>
 				</View>
 			}
 			estimatedItemSize={200}
