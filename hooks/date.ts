@@ -17,11 +17,11 @@ import { useEffect, useState } from "react";
 import { useWeekDiff } from "../utils/state";
 
 export const useDate = () => {
-	const [date, setDate] = useState(Date.now());
+	const [date, setDate] = useState(new Date("2024-11-05").valueOf());
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
-			setDate(Date.now());
+			// setDate(Date.now());
 		}, 60_000); // update every minute
 
 		// Cleanup function to clear the interval on unmount

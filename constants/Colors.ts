@@ -1,4 +1,4 @@
-const tintColorLight = "#0a7ea4";
+const tintColorLight = "#0284c7";
 
 export const colors = {
 	text: "#11181C",

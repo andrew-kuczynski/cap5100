@@ -1,5 +1,6 @@
 import {
 	Alert,
+	KeyboardAvoidingView,
 	Pressable,
 	ScrollView,
 	Text,
@@ -13,7 +14,7 @@ import queries from "@/utils/queries";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 
 export default function CreateScreen() {
@@ -96,11 +97,30 @@ export default function CreateScreen() {
 		mutate({ name, ingredients });
 	};
 
+	const valid = !!name && ingredients.length > 0;
+
 	return (
 		<ScrollView
 			className="px-4 py-8 flex flex-1"
 			keyboardShouldPersistTaps="handled"
 		>
+			<Stack.Screen
+				options={{
+					headerRight() {
+						if (!valid) {
+							return null;
+						}
+						return (
+							<Pressable
+								onPress={onSave}
+								className="active:bg-gray-100 py-2 px-4"
+							>
+								<Text className="text-sky-500 text-lg">Save</Text>
+							</Pressable>
+						);
+					},
+				}}
+			/>
 			<View className="flex-1 gap-y-12">
 				<View>
 					<TextInput
@@ -165,11 +185,11 @@ export default function CreateScreen() {
 					))}
 				</View>
 
-				<View>
+				<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={125}>
 					<Button className="w-full bg-sky-500 py-4" onPress={onSave}>
 						<Text className="text-white text-2xl">Save</Text>
 					</Button>
-				</View>
+				</KeyboardAvoidingView>
 			</View>
 		</ScrollView>
 	);

@@ -31,8 +31,8 @@ export function RecipeList({
 					onPress={() => router.push("/create-recipe")}
 					className="items-center py-8 gap-y-8"
 				>
-					<Text className="text-2xl">You have no recipes yet</Text>
-					<Text className="text-xl justify-center">
+					<Text className="text-2xl text-center">You have no recipes yet</Text>
+					<Text className="text-xl justify-center text-center">
 						Add one by tapping the{" "}
 						<View className="-mb-1">
 							<Ionicons name="add-circle-outline" size={25} />

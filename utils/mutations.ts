@@ -97,21 +97,27 @@ const meals = {
 	delete: (date: Date) =>
 		db.delete(mealsTable).where(eq(mealsTable.date, date)),
 	deleteAll: () => db.delete(mealsTable),
-	createRandom: async (dates: Date[]) => {
+	createRandom: async ({
+		dates,
+		current,
+	}: { dates: Date[]; current: number[] }) => {
 		if (dates.length === 0) return;
 
 		const allRecipes = await db
 			.select({ id: recipesTable.id })
 			.from(recipesTable)
-			.orderBy(sql`RANDOM()`)
-			.limit(dates.length);
+			.orderBy(sql`RANDOM()`);
 
-		if (allRecipes.length < dates.length) {
-			const neededRecipes = dates.length - allRecipes.length;
+		const possibleRecipes = allRecipes
+			.filter((r) => !current.includes(r.id))
+			.slice(0, dates.length);
+
+		if (possibleRecipes.length < dates.length) {
+			const neededRecipes = dates.length - possibleRecipes.length;
 			for (let i = 0; i < neededRecipes; i++) {
 				const randIndex = Math.floor(Math.random() * allRecipes.length);
 				const recipe = allRecipes[randIndex];
-				allRecipes.push(recipe);
+				possibleRecipes.push(recipe);
 			}
 		}
 
@@ -120,7 +126,7 @@ const meals = {
 			.values(
 				dates.map((date, i) => ({
 					date,
-					recipeId: allRecipes[i].id,
+					recipeId: possibleRecipes[i].id,
 				})),
 			)
 			.onConflictDoUpdate({

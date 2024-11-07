@@ -1,8 +1,10 @@
 import { Image, Pressable, Text, View } from "react-native";
 
 import { colors } from "@/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import Checkbox from "expo-checkbox";
+import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import type { IngredientDisplay } from "./IngredientsList";
 
@@ -73,6 +75,8 @@ export function GroceryList({
 		return acc;
 	}, [] as number[]);
 
+	const router = useRouter();
+
 	return (
 		<FlashList
 			ItemSeparatorComponent={Separator}
@@ -82,6 +86,22 @@ export function GroceryList({
 			getItemType={(item) => {
 				return typeof item === "string" ? "sectionHeader" : "row";
 			}}
+			ListEmptyComponent={
+				<Pressable
+					onPress={() => router.push("/")}
+					className="items-center px-8 py-8 gap-y-8"
+				>
+					<Text className="text-2xl text-center">
+						Your grocery list will auto-populate from your meals this week.
+					</Text>
+					<Text className="text-xl justify-center text-center">
+						Set a meal on week tab{" "}
+						<View className="-mb-1">
+							<Ionicons name="calendar-outline" size={25} />
+						</View>
+					</Text>
+				</Pressable>
+			}
 			renderItem={({ item, extraData }) => {
 				if (typeof item === "string") {
 					const store = storeMap[item];

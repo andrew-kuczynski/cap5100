@@ -11,7 +11,6 @@ function Button({ children, className, onPress }: Props) {
 	return (
 		<Pressable
 			onPress={onPress}
-			// border-r-4 active:border-r
 			className={`rounded-lg border active:border-hairline justify-center border-b-[3px] active:border-b items-center ${className ?? ""}`}
 		>
 			{children}

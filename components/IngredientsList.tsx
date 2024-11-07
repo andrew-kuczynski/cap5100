@@ -34,7 +34,7 @@ function Ingredient({
 	});
 
 	return (
-		<View className="bg-white rounded-md shadow-sm px-4 py-4 flex-row items-center gap-x-4">
+		<View className="bg-white rounded-md shadow-sm pl-4 flex-row items-center gap-x-4">
 			<Text className="text-xl flex-1">{ingredient.name}</Text>
 
 			{ingredient.preferredStore ? (
@@ -46,7 +46,7 @@ function Ingredient({
 					<Text>{ingredient.preferredStore.key}</Text>
 				</View>
 			) : null}
-			<Pressable onPress={() => onSelect(ingredient)}>
+			<Pressable onPress={() => onSelect(ingredient)} className="p-4">
 				<Ionicons name="ellipsis-horizontal" size={20} />
 			</Pressable>
 		</View>
