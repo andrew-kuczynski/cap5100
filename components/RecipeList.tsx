@@ -32,13 +32,15 @@ export function RecipeList({
 					className="items-center py-8 gap-y-8"
 				>
 					<Text className="text-2xl text-center">You have no recipes yet</Text>
-					<Text className="text-xl justify-center text-center">
-						Add one by tapping the{" "}
-						<View className="-mb-1">
+					<View className="flex-row gap-x-2">
+						<Text className="text-xl justify-center text-center">
+							Add one by tapping the
+						</Text>
+						<View>
 							<Ionicons name="add-circle-outline" size={25} />
-						</View>{" "}
-						button
-					</Text>
+						</View>
+						<Text className="text-xl justify-center text-center">button</Text>
+					</View>
 				</Pressable>
 			}
 			ListHeaderComponent={data && data.length > 0 ? header : undefined}

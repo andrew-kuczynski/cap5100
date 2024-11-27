@@ -94,12 +94,14 @@ export function GroceryList({
 					<Text className="text-2xl text-center">
 						Your grocery list will auto-populate from your meals this week.
 					</Text>
-					<Text className="text-xl justify-center text-center">
-						Set a meal on week tab{" "}
+					<View className="flex-row gap-x-2">
+						<Text className="text-xl justify-center text-center">
+							Set a meal on week tab
+						</Text>
 						<View className="-mb-1">
 							<Ionicons name="calendar-outline" size={25} />
 						</View>
-					</Text>
+					</View>
 				</Pressable>
 			}
 			renderItem={({ item, extraData }) => {
