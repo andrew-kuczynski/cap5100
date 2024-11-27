@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.andrewkuc.cap5100"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,6 +41,12 @@
         "projectId": "953e0b01-bcc7-4ed9-a5bf-3d74e6bf1c89"
       }
     },
-    "owner": "andrewkuc"
+    "owner": "andrewkuc",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/953e0b01-bcc7-4ed9-a5bf-3d74e6bf1c89"
+    }
   }
 }
