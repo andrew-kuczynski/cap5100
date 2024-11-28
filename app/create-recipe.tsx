@@ -147,7 +147,7 @@ export default function CreateScreen() {
 							style={{ fontSize: 24 }}
 							className="border-hairline rounded-lg p-2 flex-1"
 							placeholderTextColor="gray"
-							placeholder="Ingredients(s)"
+							placeholder="Ingredient(s)"
 							onSubmitEditing={onSubmitIngredient}
 							enablesReturnKeyAutomatically
 							blurOnSubmit={false}
